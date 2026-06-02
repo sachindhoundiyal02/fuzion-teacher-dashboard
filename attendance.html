@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Portal - Attendance Manager</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" rel="stylesheet">
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Demo Fallback Notification Banner -->
+  <div id="demoBanner" class="demo-banner">
+    <i class="bi bi-info-circle-fill me-2"></i>Running in Demo Mode (Local Storage Fallback). 
+  </div>
+  <div class="d-flex">
+    <!-- Sidebar -->
+    <div id="sidebarContainer"></div>
+    <!-- Main Wrapper -->
+    <div class="main-wrapper w-100">
+      
+      <!-- Top Navbar -->
+      <nav class="header-nav" id="headerNavbar"></nav>
+      <!-- Main Body Content -->
+      <main class="content-body animate-fade-in">
+        
+        <div class="mb-4">
+          <h1 class="fw-bold fs-2 mb-1">Attendance Manager</h1>
+          <p class="text-secondary m-0">Mark daily student attendance, track history, and analyze metrics.</p>
+        </div>
+        <div class="row g-4">
+          <!-- Selection Configuration Panel -->
+          <div class="col-lg-4">
+            <div class="custom-table-card p-4">
+              <h5 class="fw-bold mb-3"><i class="bi bi-calendar-range text-primary me-2"></i>Session Details</h5>
+              <form id="attendanceConfigForm">
+                <div class="mb-3">
+                  <label for="attDate" class="form-label fw-semibold">Attendance Date</label>
+                  <input type="date" id="attDate" class="form-control" value="2026-06-01" required>
+                </div>
+                <div class="mb-3">
+                  <label for="attClass" class="form-label fw-semibold">Class</label>
+                  <select id="attClass" class="form-select" required>
+                    <option value="">Choose Class...</option>
+                    <option value="Class 9">Class 9</option>
+                    <option value="Class 10">Class 10</option>
+                    <option value="Class 11">Class 11</option>
+                    <option value="Class 12">Class 12</option>
+                  </select>
+                </div>
+                <div class="mb-4">
+                  <label for="attSubject" class="form-label fw-semibold">Subject</label>
+                  <select id="attSubject" class="form-select" required>
+                    <option value="">Choose Subject...</option>
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="Physics">Physics</option>
+                    <option value="Chemistry">Chemistry</option>
+                    <option value="Science">Science</option>
+                    <option value="English">English</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-2.5 rounded-pill fw-bold">
+                  <i class="bi bi-search me-2"></i>Load Class Roster
+                </button>
+              </form>
+            </div>
+            <!-- Attendance stats -->
+            <div class="custom-table-card p-4 mt-4" id="dailyStatsPanel" style="display: none;">
+              <h5 class="fw-bold mb-3">Today's Attendance Summary</h5>
+              <div class="row text-center g-2">
+                <div class="col">
+                  <div class="p-2 bg-success-light rounded">
+                    <span class="small text-success fw-bold d-block">Present</span>
+                    <h4 class="fw-bold m-0 text-success mt-1" id="statPresentCount">0</h4>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="p-2 bg-danger-light rounded">
+                    <span class="small text-danger fw-bold d-block">Absent</span>
+                    <h4 class="fw-bold m-0 text-danger mt-1" id="statAbsentCount">0</h4>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="p-2 bg-warning-light rounded">
+                    <span class="small text-warning fw-bold d-block">Late</span>
+                    <h4 class="fw-bold m-0 text-warning mt-1" id="statLateCount">0</h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Roster Marking Panel -->
+          <div class="col-lg-8">
+            <div class="custom-table-card p-4 h-100" id="rosterCard">
+              <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <h5 class="fw-bold m-0"><i class="bi bi-people text-primary me-2"></i>Roster Mark Sheet</h5>
+                <div id="rosterActions" style="display: none;">
+                  <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-2.5" id="markAllPresentBtn">
+                    <i class="bi bi-check-all me-1"></i> Mark All Present
+                  </button>
+                </div>
+              </div>
+              <!-- Message shown before loading roster -->
+              <div id="rosterPlaceholder" class="text-center py-5 text-muted">
+                <i class="bi bi-calendar2-check text-secondary fs-1 d-block mb-3"></i>
+                <p class="m-0">Configure the session details and load the class roster to begin marking attendance.</p>
+              </div>
+              <!-- Roster Sheet Form -->
+              <form id="attendanceSubmissionForm" style="display: none;">
+                <div class="table-responsive">
+                  <table class="table align-middle">
+                    <thead>
+                      <tr>
+                        <th>Student</th>
+                        <th class="text-center">Present</th>
+                        <th class="text-center">Absent</th>
+                        <th class="text-center">Late</th>
+                      </tr>
+                    </thead>
+                    <tbody id="attendanceRosterBody">
+                      <!-- Dynamic list -->
+                    </tbody>
+                  </table>
+                </div>
+                <div class="mt-4 border-top pt-3 d-flex justify-content-end">
+                  <button type="submit" id="saveAttendanceBtn" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
+                    <span class="spinner-border spinner-border-sm d-none me-2" role="status"></span>
+                    <i class="bi bi-cloud-arrow-up-fill me-1"></i> Save Attendance
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <!-- Bootstrap 5 Bundle JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Script Modules -->
+  <script type="module">
+    import { checkAuthState, showToast } from './app.js';
+    import { firebaseService } from './firebase-config.js';
+    let currentTeacher = null;
+    let loadedStudents = [];
+    let existingAttendance = [];
+    document.addEventListener("DOMContentLoaded", async () => {
+      currentTeacher = await checkAuthState(true);
+    });
+    const configForm = document.getElementById("attendanceConfigForm");
+    const rosterPlaceholder = document.getElementById("rosterPlaceholder");
+    const submissionForm = document.getElementById("attendanceSubmissionForm");
+    const rosterActions = document.getElementById("rosterActions");
+    const tbody = document.getElementById("attendanceRosterBody");
+    const statsPanel = document.getElementById("dailyStatsPanel");
+    // Load Roster Event
+    configForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const date = document.getElementById("attDate").value;
+      const clazz = document.getElementById("attClass").value;
+      const subject = document.getElementById("attSubject").value;
+      try {
+        // Fetch all students and filter locally by class & subject
+        const allStudents = await firebaseService.getStudents();
+        loadedStudents = allStudents.filter(s => s.class === clazz && s.subject === subject);
+        
+        if (loadedStudents.length === 0) {
+          showToast(`No students enrolled in ${clazz} taking ${subject}.`, "warning");
+          rosterPlaceholder.style.display = "block";
+          submissionForm.style.display = "none";
+          rosterActions.style.display = "none";
+          statsPanel.style.display = "none";
+          return;
+        }
+        // Fetch existing attendance for this date to pre-populate
+        existingAttendance = await firebaseService.getAttendanceForDate(date);
+        
+        renderRoster(loadedStudents, existingAttendance);
+        
+        rosterPlaceholder.style.display = "none";
+        submissionForm.style.display = "block";
+        rosterActions.style.display = "block";
+        statsPanel.style.display = "block";
+        updateSummaryStats();
+      } catch (err) {
+        showToast(err.message || "Failed to load class roster.", "danger");
+      }
+    });
+    function renderRoster(students, attendance) {
+      tbody.innerHTML = students.map(s => {
+        // Find if they have a saved record for this date
+        const record = attendance.find(a => a.studentId === s.id);
+        const status = record ? record.status : "Present"; // Default to Present for ease
+        return `
+          <tr>
+            <td>
+              <span class="fw-semibold text-dark d-block">${s.name}</span>
+              <span class="text-muted small" style="font-size: 0.75rem;">Join Date: ${s.joiningDate}</span>
+            </td>
+            <td class="text-center">
+              <input type="radio" name="status-${s.id}" value="Present" class="form-check-input att-radio" data-student="${s.id}" ${status === 'Present' ? 'checked' : ''}>
+            </td>
+            <td class="text-center">
+              <input type="radio" name="status-${s.id}" value="Absent" class="form-check-input att-radio" data-student="${s.id}" ${status === 'Absent' ? 'checked' : ''}>
+            </td>
+            <td class="text-center">
+              <input type="radio" name="status-${s.id}" value="Late" class="form-check-input att-radio" data-student="${s.id}" ${status === 'Late' ? 'checked' : ''}>
+            </td>
+          </tr>
+        `;
+      }).join("");
+      // Bind input changes to update live statistics count immediately
+      document.querySelectorAll(".att-radio").forEach(radio => {
+        radio.addEventListener("change", updateSummaryStats);
+      });
+    }
+    function updateSummaryStats() {
+      let present = 0;
+      let absent = 0;
+      let late = 0;
+      loadedStudents.forEach(s => {
+        const selectedRadio = document.querySelector(`input[name="status-${s.id}"]:checked`);
+        if (selectedRadio) {
+          const val = selectedRadio.value;
+          if (val === "Present") present++;
+          else if (val === "Absent") absent++;
+          else if (val === "Late") late++;
+        }
+      });
+      document.getElementById("statPresentCount").textContent = present;
+      document.getElementById("statAbsentCount").textContent = absent;
+      document.getElementById("statLateCount").textContent = late;
+    }
+    // Master "Mark All Present" Action
+    document.getElementById("markAllPresentBtn").addEventListener("click", () => {
+      loadedStudents.forEach(s => {
+        const radio = document.querySelector(`input[name="status-${s.id}"][value="Present"]`);
+        if (radio) {
+          radio.checked = true;
+        }
+      });
+      updateSummaryStats();
+      showToast("All students set to Present.");
+    });
+    // Save Attendance Records Form Submit
+    submissionForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const date = document.getElementById("attDate").value;
+      const clazz = document.getElementById("attClass").value;
+      const subject = document.getElementById("attSubject").value;
+      const records = loadedStudents.map(s => {
+        const val = document.querySelector(`input[name="status-${s.id}"]:checked`).value;
+        return {
+          studentId: s.id,
+          status: val
+        };
+      });
+      const saveBtn = document.getElementById("saveAttendanceBtn");
+      const spinner = saveBtn.querySelector(".spinner-border");
+      
+      saveBtn.disabled = true;
+      spinner.classList.remove("d-none");
+      try {
+        await firebaseService.saveAttendance(date, clazz, subject, records);
+        showToast("Attendance updated successfully!");
+      } catch (err) {
+        showToast(err.message || "Failed to update attendance.", "danger");
+      } finally {
+        saveBtn.disabled = false;
+        spinner.classList.add("d-none");
+      }
+    });
+  </script>
+</body>
+</html>

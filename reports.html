@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Portal - Analytics & Reports</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" rel="stylesheet">
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Demo Fallback Notification Banner -->
+  <div id="demoBanner" class="demo-banner">
+    <i class="bi bi-info-circle-fill me-2"></i>Running in Demo Mode (Local Storage Fallback). 
+  </div>
+  <div class="d-flex">
+    <!-- Sidebar -->
+    <div id="sidebarContainer"></div>
+    <!-- Main Wrapper -->
+    <div class="main-wrapper w-100">
+      
+      <!-- Top Navbar -->
+      <nav class="header-nav" id="headerNavbar"></nav>
+      <!-- Main Body Content -->
+      <main class="content-body animate-fade-in">
+        
+        <div class="d-flex justify-content-between align-items-center flex-wrap mb-4 gap-3">
+          <div>
+            <h1 class="fw-bold fs-2 mb-1">Analytics & Reports</h1>
+            <p class="text-secondary m-0">Generate, review, and export academic and financial datasets.</p>
+          </div>
+          
+          <!-- Export Action Buttons -->
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-danger rounded-pill px-3 fw-semibold" id="exportPdfBtn">
+              <i class="bi bi-file-pdf-fill me-1"></i> Export PDF
+            </button>
+            <button class="btn btn-outline-success rounded-pill px-3 fw-semibold" id="exportExcelBtn">
+              <i class="bi bi-file-excel-fill me-1"></i> Export Excel
+            </button>
+          </div>
+        </div>
+        <!-- Navigation Tabs for Report Sections -->
+        <div class="custom-table-card mb-4">
+          <ul class="nav nav-tabs nav-fill" id="reportTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active py-3 fw-bold small text-uppercase" id="fees-collected-tab" data-bs-toggle="tab" data-bs-target="#fees-collected-pane" type="button" role="tab">
+                <i class="bi bi-cash-stack me-1"></i> Fee Collection
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link py-3 fw-bold small text-uppercase" id="fees-pending-tab" data-bs-toggle="tab" data-bs-target="#fees-pending-pane" type="button" role="tab">
+                <i class="bi bi-wallet-fill me-1"></i> Pending Dues
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link py-3 fw-bold small text-uppercase" id="attendance-sheet-tab" data-bs-toggle="tab" data-bs-target="#attendance-sheet-pane" type="button" role="tab">
+                <i class="bi bi-calendar-check me-1"></i> Attendance Log
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link py-3 fw-bold small text-uppercase" id="perf-grading-tab" data-bs-toggle="tab" data-bs-target="#perf-grading-pane" type="button" role="tab">
+                <i class="bi bi-award-fill me-1"></i> Performance Grid
+              </button>
+            </li>
+          </ul>
+        </div>
+        <!-- Tab content boxes -->
+        <div class="tab-content" id="reportTabsContent">
+          
+          <!-- 1. FEE COLLECTION REPORT PANE -->
+          <div class="tab-pane fade show active" id="fees-collected-pane" role="tabpanel">
+            <div class="custom-table-card p-4">
+              <h5 class="fw-bold mb-4">Fee Collections Log</h5>
+              <div class="table-responsive">
+                <table class="table align-middle" id="feesCollectedTable">
+                  <thead>
+                    <tr>
+                      <th>Transaction ID</th>
+                      <th>Student</th>
+                      <th>Payment Date</th>
+                      <th>Cleared Month(s)</th>
+                      <th>Remarks</th>
+                      <th class="text-end">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody id="feesCollectedBody">
+                    <tr>
+                      <td colspan="6" class="text-center py-4 text-muted">No collections recorded.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <!-- 2. PENDING FEES REPORT PANE -->
+          <div class="tab-pane fade" id="fees-pending-pane" role="tabpanel">
+            <div class="custom-table-card p-4">
+              <h5 class="fw-bold mb-4">Pending Fee Dues Registry</h5>
+              <div class="table-responsive">
+                <table class="table align-middle" id="feesPendingTable">
+                  <thead>
+                    <tr>
+                      <th>Student Name</th>
+                      <th>Class & Subject</th>
+                      <th>Parent Name</th>
+                      <th>Parent Mobile</th>
+                      <th>Dues Months</th>
+                      <th>Status</th>
+                      <th class="text-end">Due Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody id="feesPendingBody">
+                    <tr>
+                      <td colspan="7" class="text-center py-4 text-muted">No pending dues found.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <!-- 3. ATTENDANCE SHEET PANE -->
+          <div class="tab-pane fade" id="attendance-sheet-pane" role="tabpanel">
+            <div class="custom-table-card p-4">
+              <h5 class="fw-bold mb-4">Student Attendance Summary</h5>
+              <div class="table-responsive">
+                <table class="table align-middle" id="attendanceSheetTable">
+                  <thead>
+                    <tr>
+                      <th>Student Name</th>
+                      <th>Class & Subject</th>
+                      <th>Parent Contact</th>
+                      <th>Total Sessions</th>
+                      <th>Present Count</th>
+                      <th>Absent Count</th>
+                      <th>Late Count</th>
+                      <th class="text-end">Attendance Rate</th>
+                    </tr>
+                  </thead>
+                  <tbody id="attendanceSheetBody">
+                    <tr>
+                      <td colspan="8" class="text-center py-4 text-muted">No attendance data logs.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <!-- 4. PERFORMANCE GRID PANE -->
+          <div class="tab-pane fade" id="perf-grading-pane" role="tabpanel">
+            <div class="custom-table-card p-4">
+              <h5 class="fw-bold mb-4">Student Assessment Performance Grid</h5>
+              <div class="table-responsive">
+                <table class="table align-middle" id="performanceGridTable">
+                  <thead>
+                    <tr>
+                      <th>Student Name</th>
+                      <th>Class</th>
+                      <th>Total Tests Taken</th>
+                      <th>Average Score</th>
+                      <th>Highest Score</th>
+                      <th class="text-end">Performance Badge</th>
+                    </tr>
+                  </thead>
+                  <tbody id="performanceGridBody">
+                    <tr>
+                      <td colspan="6" class="text-center py-4 text-muted">No performance grades found.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <!-- Libraries & Bundles CDNs -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- PDF & Excel Generation Modules -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <!-- Script Modules -->
+  <script type="module">
+    import { checkAuthState, calculateDues, showToast } from './app.js';
+    import { firebaseService } from './firebase-config.js';
+    let currentTeacher = null;
+    let studentsCached = [];
+    let paymentsCached = [];
+    let attendanceCached = [];
+    let performanceCached = [];
+    document.addEventListener("DOMContentLoaded", async () => {
+      currentTeacher = await checkAuthState(true);
+      if (currentTeacher) {
+        await fetchReportsData();
+      }
+    });
+    async function fetchReportsData() {
+      try {
+        const [students, payments, attendance, performance] = await Promise.all([
+          firebaseService.getStudents(),
+          firebaseService.getFeeHistory(),
+          firebaseService.getAttendanceHistory(),
+          firebaseService.getPerformanceHistory()
+        ]);
+        studentsCached = students;
+        paymentsCached = payments;
+        attendanceCached = attendance;
+        performanceCached = performance;
+        renderFeeCollectionReport();
+        renderPendingFeesReport();
+        renderAttendanceSummaryReport();
+        renderPerformanceGridReport();
+      } catch (err) {
+        showToast(err.message || "Failed to compile analytical data grids.", "danger");
+      }
+    }
+    // Report Render 1: Fee Collections
+    function renderFeeCollectionReport() {
+      const tbody = document.getElementById("feesCollectedBody");
+      if (paymentsCached.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted">No collections recorded.</td></tr>`;
+        return;
+      }
+      // Sort by payment date descending
+      const sorted = [...paymentsCached].sort((a, b) => b.datePaid.localeCompare(a.datePaid));
+      tbody.innerHTML = sorted.map(f => {
+        const student = studentsCached.find(s => s.id === f.studentId) || { name: "Unknown Student" };
+        const months = (f.monthsCovered || []).join(", ") || "N/A";
+        return `
+          <tr>
+            <td class="small text-muted">${f.id}</td>
+            <td><span class="fw-semibold text-dark">${student.name}</span></td>
+            <td>${f.datePaid}</td>
+            <td><span class="badge bg-secondary-light text-secondary">${months}</span></td>
+            <td class="text-muted small">${f.remarks || '-'}</td>
+            <td class="text-end fw-bold text-success">₹${f.amount}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+    // Report Render 2: Pending Fees
+    function renderPendingFeesReport() {
+      const tbody = document.getElementById("feesPendingBody");
+      const list = studentsCached.filter(s => {
+        const dues = calculateDues(s);
+        return dues.dueAmount > 0;
+      });
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-muted">No pending dues found. All set!</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = list.map(s => {
+        const dues = calculateDues(s);
+        const color = dues.status === "Overdue" ? "danger" : "warning";
+        return `
+          <tr>
+            <td><span class="fw-semibold text-dark">${s.name}</span></td>
+            <td class="small">${s.class} | ${s.subject}</td>
+            <td class="small">${s.parentName}</td>
+            <td class="small">${s.parentMobile}</td>
+            <td class="fw-bold text-center">${dues.pendingMonths}</td>
+            <td>
+              <span class="badge bg-${color}-light text-${color} fw-bold rounded-pill px-2.5" style="font-size: 0.75rem;">
+                ${dues.status}
+              </span>
+            </td>
+            <td class="text-end fw-bold text-danger">₹${dues.dueAmount}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+    // Report Render 3: Attendance Sheet
+    function renderAttendanceSummaryReport() {
+      const tbody = document.getElementById("attendanceSheetBody");
+      if (studentsCached.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-muted">No student records in catalog.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = studentsCached.map(s => {
+        const history = attendanceCached.filter(a => a.studentId === s.id);
+        const total = history.length;
+        const present = history.filter(a => a.status === "Present").length;
+        const absent = history.filter(a => a.status === "Absent").length;
+        const late = history.filter(a => a.status === "Late").length;
+        const rate = s.attendancePercentage || 0;
+        return `
+          <tr>
+            <td><span class="fw-semibold text-dark">${s.name}</span></td>
+            <td class="small">${s.class} | ${s.subject}</td>
+            <td class="small">${s.parentMobile}</td>
+            <td class="text-center small">${total}</td>
+            <td class="text-center small text-success fw-bold">${present}</td>
+            <td class="text-center small text-danger fw-bold">${absent}</td>
+            <td class="text-center small text-warning fw-bold">${late}</td>
+            <td class="text-end fw-bold text-primary">${rate}%</td>
+          </tr>
+        `;
+      }).join("");
+    }
+    // Report Render 4: Performance Ratings Grid
+    function renderPerformanceGridReport() {
+      const tbody = document.getElementById("performanceGridBody");
+      if (studentsCached.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted">No student records in catalog.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = studentsCached.map(s => {
+        const records = performanceCached.filter(p => p.studentId === s.id);
+        const count = records.length;
+        
+        let avgScore = 0;
+        let maxScore = 0;
+        
+        if (count > 0) {
+          const totalPct = records.reduce((acc, curr) => acc + (curr.score / curr.maxScore) * 100, 0);
+          avgScore = Math.round(totalPct / count);
+          
+          const maxPctList = records.map(p => (p.score / p.maxScore) * 100);
+          maxScore = Math.round(Math.max(...maxPctList));
+        }
+        let badgeClass = "badge-excellent";
+        if (s.performanceRating === "Good") badgeClass = "badge-good";
+        else if (s.performanceRating === "Average") badgeClass = "badge-average";
+        else if (s.performanceRating === "Needs Improvement") badgeClass = "badge-needs-improvement";
+        return `
+          <tr>
+            <td><span class="fw-semibold text-dark">${s.name}</span></td>
+            <td class="small">${s.class}</td>
+            <td class="text-center small">${count}</td>
+            <td class="fw-bold">${count > 0 ? avgScore + '%' : '-'}</td>
+            <td class="text-muted small">${count > 0 ? maxScore + '%' : '-'}</td>
+            <td class="text-end">
+              <span class="badge-premium ${badgeClass}">${s.performanceRating || 'Good'}</span>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+    // ==========================================
+    //           EXPORTS CONTROLLER ACTIONS
+    // ==========================================
+    // Dynamic Sheet selection helper
+    function getActivePaneData() {
+      const activeTabId = document.querySelector("#reportTabs button.active").id;
+      
+      if (activeTabId === "fees-collected-tab") {
+        return {
+          title: "Fee Collections Report",
+          filename: "Fee_Collections_Report",
+          elementId: "feesCollectedTable"
+        };
+      } else if (activeTabId === "fees-pending-tab") {
+        return {
+          title: "Pending Dues Report",
+          filename: "Pending_Dues_Report",
+          elementId: "feesPendingTable"
+        };
+      } else if (activeTabId === "attendance-sheet-tab") {
+        return {
+          title: "Attendance Summary Report",
+          filename: "Attendance_Summary_Report",
+          elementId: "attendanceSheetTable"
+        };
+      } else {
+        return {
+          title: "Student Performance Grid Report",
+          filename: "Student_Performance_Report",
+          elementId: "performanceGridTable"
+        };
+      }
+    }
+    // 1. Export PDF using jsPDF + AutoTable
+    document.getElementById("exportPdfBtn").addEventListener("click", () => {
+      const report = getActivePaneData();
+      const doc = new window.jspdf.jsPDF();
+      
+      // Page styling headers
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(18);
+      doc.text(report.title, 14, 22);
+      
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.text(`Generated by: ${currentTeacher.name} - ${currentTeacher.schoolName}`, 14, 29);
+      doc.text(`Academic Date: June 1, 2026`, 14, 34);
+      
+      // Select HTML Table and generate AutoTable config
+      const table = document.getElementById(report.elementId);
+      
+      doc.autoTable({
+        html: table,
+        startY: 40,
+        theme: 'striped',
+        headStyles: { fillColor: [99, 102, 241] }, // Indigo primary theme
+        styles: { font: "helvetica", fontSize: 9 },
+        margin: { left: 14, right: 14 }
+      });
+      
+      doc.save(`${report.filename}_2026-06-01.pdf`);
+      showToast("PDF report exported successfully.");
+    });
+    // 2. Export Excel sheet using SheetJS
+    document.getElementById("exportExcelBtn").addEventListener("click", () => {
+      const report = getActivePaneData();
+      const table = document.getElementById(report.elementId);
+      
+      const wb = XLSX.utils.table_to_book(table, { sheet: "Report Data" });
+      XLSX.writeFile(wb, `${report.filename}_2026-06-01.xlsx`);
+      showToast("Excel workbook sheet exported successfully.");
+    });
+  </script>
+</body>
+</html>

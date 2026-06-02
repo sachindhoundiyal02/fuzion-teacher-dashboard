@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Portal - Student Roster</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" rel="stylesheet">
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Demo Fallback Notification Banner -->
+  <div id="demoBanner" class="demo-banner">
+    <i class="bi bi-info-circle-fill me-2"></i>Running in Demo Mode (Local Storage Fallback). 
+  </div>
+  <div class="d-flex">
+    <!-- Sidebar -->
+    <div id="sidebarContainer"></div>
+    <!-- Main Wrapper -->
+    <div class="main-wrapper w-100">
+      
+      <!-- Top Navbar -->
+      <nav class="header-nav" id="headerNavbar"></nav>
+      <!-- Main Body Content -->
+      <main class="content-body animate-fade-in">
+        
+        <div class="d-flex justify-content-between align-items-center flex-wrap mb-4 gap-3">
+          <div>
+            <h1 class="fw-bold fs-2 mb-1">Student Roster</h1>
+            <p class="text-secondary m-0">Add, edit, view, or manage student enrollment and records.</p>
+          </div>
+          <button class="btn btn-primary rounded-pill px-4 fw-semibold shadow-sm" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+            <i class="bi bi-person-plus-fill me-1"></i> Add Student
+          </button>
+        </div>
+        <!-- Advanced Search and Filters Toolbar -->
+        <div class="custom-table-card p-4 mb-4">
+          <div class="row g-3">
+            <div class="col-md-4 col-lg-3">
+              <label class="form-label small fw-semibold text-secondary">Search</label>
+              <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                <input type="text" id="filterSearch" class="form-control border-start-0" placeholder="Name or mobile...">
+              </div>
+            </div>
+            
+            <div class="col-md-2 col-lg-2">
+              <label class="form-label small fw-semibold text-secondary">Class</label>
+              <select id="filterClass" class="form-select">
+                <option value="">All Classes</option>
+                <option value="Class 9">Class 9</option>
+                <option value="Class 10">Class 10</option>
+                <option value="Class 11">Class 11</option>
+                <option value="Class 12">Class 12</option>
+              </select>
+            </div>
+            <div class="col-md-2 col-lg-2">
+              <label class="form-label small fw-semibold text-secondary">Subject</label>
+              <select id="filterSubject" class="form-select">
+                <option value="">All Subjects</option>
+                <option value="Mathematics">Mathematics</option>
+                <option value="Physics">Physics</option>
+                <option value="Chemistry">Chemistry</option>
+                <option value="Science">Science</option>
+                <option value="English">English</option>
+              </select>
+            </div>
+            <div class="col-md-2 col-lg-2">
+              <label class="form-label small fw-semibold text-secondary">Fee Status</label>
+              <select id="filterFeeStatus" class="form-select">
+                <option value="">All Statuses</option>
+                <option value="Paid">Paid</option>
+                <option value="Pending">Pending</option>
+                <option value="Overdue">Overdue</option>
+              </select>
+            </div>
+            <div class="col-md-2 col-lg-3">
+              <label class="form-label small fw-semibold text-secondary">Performance</label>
+              <select id="filterPerformance" class="form-select">
+                <option value="">All Ratings</option>
+                <option value="Excellent">Excellent</option>
+                <option value="Good">Good</option>
+                <option value="Average">Average</option>
+                <option value="Needs Improvement">Needs Improvement</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <!-- Student Database Grid Table -->
+        <div class="custom-table-card">
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead>
+                <tr>
+                  <th>Student Name</th>
+                  <th>Class & Subject</th>
+                  <th>Parent Info</th>
+                  <th>Joining Date</th>
+                  <th>Monthly Fee</th>
+                  <th>Fee Status</th>
+                  <th>Attendance</th>
+                  <th>Performance</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="studentTableBody">
+                <tr>
+                  <td colspan="9" class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <!-- ADD STUDENT MODAL -->
+  <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg" style="border-radius: var(--radius-lg);">
+        <div class="modal-header border-bottom px-4">
+          <h5 class="modal-title fw-bold" id="addStudentModalLabel"><i class="bi bi-person-plus-fill text-primary me-2"></i>Register New Student</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="addStudentForm" class="needs-validation" novalidate>
+          <div class="modal-body px-4 py-4">
+            
+            <div class="row g-3">
+              <!-- Basic Student Info -->
+              <div class="col-md-6">
+                <label for="addName" class="form-label fw-semibold">Student Full Name</label>
+                <input type="text" id="addName" class="form-control" placeholder="Rahul Kumar" required>
+              </div>
+              <div class="col-md-6">
+                <label for="addMobile" class="form-label fw-semibold">Mobile Number</label>
+                <input type="tel" id="addMobile" class="form-control" placeholder="9876543210" required>
+              </div>
+              
+              <!-- Parent Info -->
+              <div class="col-md-6">
+                <label for="addParentName" class="form-label fw-semibold">Parent Name</label>
+                <input type="text" id="addParentName" class="form-control" placeholder="Sanjay Kumar" required>
+              </div>
+              <div class="col-md-6">
+                <label for="addParentMobile" class="form-label fw-semibold">Parent Contact Number</label>
+                <input type="tel" id="addParentMobile" class="form-control" placeholder="9876543211" required>
+              </div>
+              <!-- Education Info -->
+              <div class="col-md-6">
+                <label for="addClass" class="form-label fw-semibold">Class</label>
+                <input type="text" id="addClass" class="form-control" placeholder="Class 10" required>
+              </div>
+              <div class="col-md-6">
+                <label for="addSubject" class="form-label fw-semibold">Subject</label>
+                <input type="text" id="addSubject" class="form-control" placeholder="Mathematics" required>
+              </div>
+              <!-- Fees and Date -->
+              <div class="col-md-6">
+                <label for="addJoiningDate" class="form-label fw-semibold">Joining Date</label>
+                <input type="date" id="addJoiningDate" class="form-control" value="2026-06-01" required>
+              </div>
+              <div class="col-md-3">
+                <label for="addMonthlyFee" class="form-label fw-semibold">Monthly Fee (₹)</label>
+                <input type="number" id="addMonthlyFee" class="form-control" placeholder="1500" required>
+              </div>
+              <div class="col-md-3">
+                <label for="addLastPaid" class="form-label fw-semibold">Last Fee Paid Month</label>
+                <input type="month" id="addLastPaid" class="form-control" value="2026-05">
+              </div>
+              <!-- Overall Performance Initial rating -->
+              <div class="col-md-6">
+                <label for="addPerformance" class="form-label fw-semibold">Performance Rating</label>
+                <select id="addPerformance" class="form-select">
+                  <option value="Excellent">Excellent</option>
+                  <option value="Good" selected>Good</option>
+                  <option value="Average">Average</option>
+                  <option value="Needs Improvement">Needs Improvement</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="addNotes" class="form-label fw-semibold">Remarks/Notes</label>
+                <input type="text" id="addNotes" class="form-control" placeholder="Any initial comments...">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-top px-4">
+            <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold">Register Student</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- EDIT STUDENT MODAL -->
+  <div class="modal fade" id="editStudentModal" tabindex="-1" aria-labelledby="editStudentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg" style="border-radius: var(--radius-lg);">
+        <div class="modal-header border-bottom px-4">
+          <h5 class="modal-title fw-bold" id="editStudentModalLabel"><i class="bi bi-pencil-square text-primary me-2"></i>Modify Student Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="editStudentForm" novalidate>
+          <input type="hidden" id="editStudentId">
+          <div class="modal-body px-4 py-4">
+            
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="editName" class="form-label fw-semibold">Student Full Name</label>
+                <input type="text" id="editName" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label for="editMobile" class="form-label fw-semibold">Mobile Number</label>
+                <input type="tel" id="editMobile" class="form-control" required>
+              </div>
+              
+              <div class="col-md-6">
+                <label for="editParentName" class="form-label fw-semibold">Parent Name</label>
+                <input type="text" id="editParentName" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label for="editParentMobile" class="form-label fw-semibold">Parent Contact Number</label>
+                <input type="tel" id="editParentMobile" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label for="editClass" class="form-label fw-semibold">Class</label>
+                <input type="text" id="editClass" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label for="editSubject" class="form-label fw-semibold">Subject</label>
+                <input type="text" id="editSubject" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label for="editJoiningDate" class="form-label fw-semibold">Joining Date</label>
+                <input type="date" id="editJoiningDate" class="form-control" required>
+              </div>
+              <div class="col-md-3">
+                <label for="editMonthlyFee" class="form-label fw-semibold">Monthly Fee (₹)</label>
+                <input type="number" id="editMonthlyFee" class="form-control" required>
+              </div>
+              <div class="col-md-3">
+                <label for="editLastPaid" class="form-label fw-semibold">Last Fee Paid Month</label>
+                <input type="month" id="editLastPaid" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="editPerformance" class="form-label fw-semibold">Performance Rating</label>
+                <select id="editPerformance" class="form-select">
+                  <option value="Excellent">Excellent</option>
+                  <option value="Good">Good</option>
+                  <option value="Average">Average</option>
+                  <option value="Needs Improvement">Needs Improvement</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="editNotes" class="form-label fw-semibold">Remarks/Notes</label>
+                <input type="text" id="editNotes" class="form-control">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-top px-4">
+            <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold">Update Details</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- VIEW PROFILE MODAL -->
+  <div class="modal fade" id="viewStudentModal" tabindex="-1" aria-labelledby="viewStudentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg" style="border-radius: var(--radius-lg);">
+        <div class="modal-header border-bottom px-4">
+          <h5 class="modal-title fw-bold" id="viewStudentModalLabel"><i class="bi bi-person-badge text-primary me-2"></i>Student Academic Profile</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body px-4 py-4" id="viewStudentProfileBody">
+          <!-- Populated Dynamically via JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Bootstrap 5 Bundle JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Script Modules -->
+  <script type="module">
+    import { checkAuthState, calculateDues, showToast, getWhatsAppReminderLink } from './app.js';
+    import { firebaseService } from './firebase-config.js';
+    let currentTeacher = null;
+    let cachedStudents = [];
+    // Check Auth State on load
+    document.addEventListener("DOMContentLoaded", async () => {
+      currentTeacher = await checkAuthState(true);
+      if (currentTeacher) {
+        await loadStudents();
+      }
+    });
+    // Core function to load students list from db
+    async function loadStudents() {
+      try {
+        const list = await firebaseService.getStudents();
+        cachedStudents = list;
+        renderStudentsTable(list);
+      } catch (err) {
+        showToast(err.message || "Failed to retrieve student roster.", "danger");
+      }
+    }
+    // Rendering Table Content
+    function renderStudentsTable(list) {
+      const tbody = document.getElementById("studentTableBody");
+      
+      if (list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" class="text-center py-4 text-muted">
+              <i class="bi bi-people fs-2 d-block mb-2 text-secondary"></i>
+              No students found in your roster. Click "Add Student" to start.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      tbody.innerHTML = list.map(s => {
+        const dues = calculateDues(s);
+        let badgeClass = "badge-excellent";
+        if (s.performanceRating === "Good") badgeClass = "badge-good";
+        else if (s.performanceRating === "Average") badgeClass = "badge-average";
+        else if (s.performanceRating === "Needs Improvement") badgeClass = "badge-needs-improvement";
+        let feeBadge = `<span class="badge bg-success-light text-success fw-semibold">Paid</span>`;
+        if (dues.status === "Pending") {
+          feeBadge = `<span class="badge bg-warning-light text-warning fw-semibold">Pending (₹${dues.dueAmount})</span>`;
+        } else if (dues.status === "Overdue") {
+          feeBadge = `<span class="badge bg-danger-light text-danger fw-semibold">Overdue (₹${dues.dueAmount})</span>`;
+        }
+        return `
+          <tr>
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="rounded-circle bg-primary-light text-primary fw-bold d-flex align-items-center justify-content-center me-3" style="width: 36px; height: 36px; font-size: 0.85rem;">
+                  ${s.name.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <span class="fw-semibold text-dark d-block">${s.name}</span>
+                  <span class="text-muted small" style="font-size: 0.75rem;"><i class="bi bi-telephone"></i> ${s.mobile}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="text-secondary small d-block">${s.class}</span>
+              <span class="text-muted small" style="font-size: 0.75rem;">${s.subject}</span>
+            </td>
+            <td>
+              <span class="text-secondary small d-block">${s.parentName}</span>
+              <span class="text-muted small" style="font-size: 0.75rem;"><i class="bi bi-telephone"></i> ${s.parentMobile}</span>
+            </td>
+            <td class="small">${s.joiningDate}</td>
+            <td class="fw-semibold">₹${s.monthlyFee}</td>
+            <td>${feeBadge}</td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <div class="progress flex-grow-1" style="height: 6px; min-width: 50px;">
+                  <div class="progress-bar bg-success" role="progressbar" style="width: ${s.attendancePercentage || 0}%" aria-valuenow="${s.attendancePercentage || 0}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <span class="small fw-semibold">${s.attendancePercentage || 0}%</span>
+              </div>
+            </td>
+            <td>
+              <span class="badge-premium ${badgeClass}">${s.performanceRating || 'Good'}</span>
+            </td>
+            <td class="text-end">
+              <div class="dropdown">
+                <button class="btn btn-sm btn-icon border-0 text-secondary" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end border-0 shadow">
+                  <li><a class="dropdown-item view-btn" href="#" data-id="${s.id}"><i class="bi bi-eye text-primary me-2"></i> View Profile</a></li>
+                  <li><a class="dropdown-item edit-btn" href="#" data-id="${s.id}"><i class="bi bi-pencil text-warning me-2"></i> Edit Details</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item delete-btn text-danger" href="#" data-id="${s.id}"><i class="bi bi-trash me-2"></i> Delete Student</a></li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+      // Bind actions
+      document.querySelectorAll(".view-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          showStudentProfile(btn.dataset.id);
+        });
+      });
+      document.querySelectorAll(".edit-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          showEditForm(btn.dataset.id);
+        });
+      });
+      document.querySelectorAll(".delete-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          triggerDeleteStudent(btn.dataset.id);
+        });
+      });
+    }
+    // Filters and Search Operations
+    const searchInput = document.getElementById("filterSearch");
+    const classSelect = document.getElementById("filterClass");
+    const subjSelect = document.getElementById("filterSubject");
+    const feeSelect = document.getElementById("filterFeeStatus");
+    const perfSelect = document.getElementById("filterPerformance");
+    function runFilters() {
+      const search = searchInput.value.toLowerCase().trim();
+      const clazz = classSelect.value;
+      const subject = subjSelect.value;
+      const feeStatus = feeSelect.value;
+      const perfRating = perfSelect.value;
+      const filtered = cachedStudents.filter(s => {
+        const dues = calculateDues(s);
+        
+        // Search matches
+        const matchesSearch = s.name.toLowerCase().includes(search) || 
+                              s.mobile.includes(search) || 
+                              s.parentName.toLowerCase().includes(search);
+        
+        // Filter dropdown matches
+        const matchesClass = !clazz || s.class === clazz;
+        const matchesSubj = !subject || s.subject === subject;
+        const matchesFee = !feeStatus || dues.status === feeStatus;
+        const matchesPerf = !perfRating || s.performanceRating === perfRating;
+        return matchesSearch && matchesClass && matchesSubj && matchesFee && matchesPerf;
+      });
+      renderStudentsTable(filtered);
+    }
+    // Attach search and filter event listeners
+    [searchInput, classSelect, subjSelect, feeSelect, perfSelect].forEach(el => {
+      el.addEventListener("input", runFilters);
+    });
+    // Add Student Form Submission
+    const addStudentForm = document.getElementById("addStudentForm");
+    const addStudentModal = new bootstrap.Modal(document.getElementById("addStudentModal"));
+    addStudentForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById("addName").value.trim();
+      const mobile = document.getElementById("addMobile").value.trim();
+      const parentName = document.getElementById("addParentName").value.trim();
+      const parentMobile = document.getElementById("addParentMobile").value.trim();
+      const clazz = document.getElementById("addClass").value.trim();
+      const subject = document.getElementById("addSubject").value.trim();
+      const joiningDate = document.getElementById("addJoiningDate").value;
+      const monthlyFee = Number(document.getElementById("addMonthlyFee").value);
+      const lastPaid = document.getElementById("addLastPaid").value || ""; // "YYYY-MM"
+      const perf = document.getElementById("addPerformance").value;
+      const notes = document.getElementById("addNotes").value.trim();
+      if (!name || !mobile || !parentName || !parentMobile || !clazz || !subject || !joiningDate || !monthlyFee) {
+        showToast("Please fill all required inputs.", "danger");
+        return;
+      }
+      try {
+        const student = {
+          name,
+          mobile,
+          parentName,
+          parentMobile,
+          class: clazz,
+          subject,
+          joiningDate,
+          monthlyFee,
+          lastFeePaidMonth: lastPaid,
+          performanceRating: perf,
+          notes,
+          attendancePercentage: 0
+        };
+        await firebaseService.addStudent(student);
+        addStudentForm.reset();
+        addStudentModal.hide();
+        showToast("Student registered successfully!");
+        await loadStudents();
+      } catch (err) {
+        showToast(err.message || "Failed to register student.", "danger");
+      }
+    });
+    // Edit Student Form Prefill & Submission
+    const editStudentForm = document.getElementById("editStudentForm");
+    const editStudentModal = new bootstrap.Modal(document.getElementById("editStudentModal"));
+    function showEditForm(id) {
+      const student = cachedStudents.find(s => s.id === id);
+      if (!student) return;
+      document.getElementById("editStudentId").value = student.id;
+      document.getElementById("editName").value = student.name;
+      document.getElementById("editMobile").value = student.mobile;
+      document.getElementById("editParentName").value = student.parentName;
+      document.getElementById("editParentMobile").value = student.parentMobile;
+      document.getElementById("editClass").value = student.class;
+      document.getElementById("editSubject").value = student.subject;
+      document.getElementById("editJoiningDate").value = student.joiningDate;
+      document.getElementById("editMonthlyFee").value = student.monthlyFee;
+      document.getElementById("editLastPaid").value = student.lastFeePaidMonth || "";
+      document.getElementById("editPerformance").value = student.performanceRating || "Good";
+      document.getElementById("editNotes").value = student.notes || "";
+      editStudentModal.show();
+    }
+    editStudentForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const id = document.getElementById("editStudentId").value;
+      const name = document.getElementById("editName").value.trim();
+      const mobile = document.getElementById("editMobile").value.trim();
+      const parentName = document.getElementById("editParentName").value.trim();
+      const parentMobile = document.getElementById("editParentMobile").value.trim();
+      const clazz = document.getElementById("editClass").value.trim();
+      const subject = document.getElementById("editSubject").value.trim();
+      const joiningDate = document.getElementById("editJoiningDate").value;
+      const monthlyFee = Number(document.getElementById("editMonthlyFee").value);
+      const lastPaid = document.getElementById("editLastPaid").value;
+      const perf = document.getElementById("editPerformance").value;
+      const notes = document.getElementById("editNotes").value.trim();
+      try {
+        const updateData = {
+          name, mobile, parentName, parentMobile, class: clazz, subject,
+          joiningDate, monthlyFee, lastFeePaidMonth: lastPaid, performanceRating: perf, notes
+        };
+        await firebaseService.updateStudent(id, updateData);
+        editStudentModal.hide();
+        showToast("Student details updated successfully!");
+        await loadStudents();
+      } catch (err) {
+        showToast(err.message || "Failed to update student.", "danger");
+      }
+    });
+    // Delete Student Action
+    async function triggerDeleteStudent(id) {
+      const student = cachedStudents.find(s => s.id === id);
+      if (!student) return;
+      if (confirm(`Are you sure you want to completely delete ${student.name}? All linked attendance, fee collections, and performance logs will be removed.`)) {
+        try {
+          await firebaseService.deleteStudent(id);
+          showToast(`Successfully deleted student: ${student.name}`);
+          await loadStudents();
+        } catch (err) {
+          showToast(err.message || "Deletion failed.", "danger");
+        }
+      }
+    }
+    // View Student Profile (Deep Profile Modal)
+    const viewStudentModal = new bootstrap.Modal(document.getElementById("viewStudentModal"));
+    async function showStudentProfile(id) {
+      const student = cachedStudents.find(s => s.id === id);
+      if (!student) return;
+      const profileBody = document.getElementById("viewStudentProfileBody");
+      profileBody.innerHTML = `
+        <div class="text-center py-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading details...</span>
+          </div>
+        </div>
+      `;
+      viewStudentModal.show();
+      try {
+        const [feeHistory, attHistory, perfHistory] = await Promise.all([
+          firebaseService.getFeeHistory(id),
+          firebaseService.getAttendanceHistory(id),
+          firebaseService.getPerformanceHistory(id)
+        ]);
+        const dues = calculateDues(student);
+        const waLink = getWhatsAppReminderLink(student, dues);
+        let ratingClass = "badge-excellent";
+        if (student.performanceRating === "Good") ratingClass = "badge-good";
+        else if (student.performanceRating === "Average") ratingClass = "badge-average";
+        else if (student.performanceRating === "Needs Improvement") ratingClass = "badge-needs-improvement";
+        profileBody.innerHTML = `
+          <!-- Header Profile Summary -->
+          <div class="d-flex align-items-center border-bottom pb-4 mb-4 flex-wrap gap-3">
+            <div class="rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center fs-3" style="width: 72px; height: 72px;">
+              ${student.name.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <h3 class="fw-bold m-0">${student.name}</h3>
+              <p class="text-secondary mb-1">${student.class} | ${student.subject}</p>
+              <div class="d-flex gap-2">
+                <span class="badge-premium ${ratingClass}">${student.performanceRating || 'Good'}</span>
+                <span class="badge bg-primary-light text-primary fw-semibold d-inline-flex align-items-center">Join Date: ${student.joiningDate}</span>
+              </div>
+            </div>
+            <div class="ms-md-auto text-md-end">
+              <span class="text-muted d-block small">Monthly Fee Dues</span>
+              <h4 class="fw-bold ${dues.dueAmount > 0 ? 'text-danger' : 'text-success'}">₹${dues.dueAmount}</h4>
+              ${dues.dueAmount > 0 ? `<a href="${waLink}" target="_blank" class="btn btn-sm btn-success rounded-pill px-2.5 mt-1 small"><i class="bi bi-whatsapp"></i> WhatsApp Reminder</a>` : ''}
+            </div>
+          </div>
+          <!-- Quick statistics -->
+          <div class="row row-cols-2 row-cols-md-4 g-3 mb-4">
+            <div class="col">
+              <div class="p-3 bg-light rounded text-center">
+                <span class="text-muted small d-block">Monthly Fee</span>
+                <h5 class="fw-bold m-0 mt-1">₹${student.monthlyFee}</h5>
+              </div>
+            </div>
+            <div class="col">
+              <div class="p-3 bg-light rounded text-center">
+                <span class="text-muted small d-block">Last Paid Month</span>
+                <h5 class="fw-bold m-0 mt-1">${student.lastFeePaidMonth || 'None'}</h5>
+              </div>
+            </div>
+            <div class="col">
+              <div class="p-3 bg-light rounded text-center">
+                <span class="text-muted small d-block">Attendance</span>
+                <h5 class="fw-bold m-0 mt-1">${student.attendancePercentage || 0}%</h5>
+              </div>
+            </div>
+            <div class="col">
+              <div class="p-3 bg-light rounded text-center">
+                <span class="text-muted small d-block">Mobile</span>
+                <h5 class="fw-semibold m-0 mt-1" style="font-size: 0.9rem;">${student.mobile}</h5>
+              </div>
+            </div>
+          </div>
+          <!-- Details Accordion Tabs -->
+          <ul class="nav nav-pills nav-fill mb-3 bg-light p-1 rounded" id="pills-tab" role="tablist" style="border-radius: var(--radius-md);">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active rounded-pill fw-semibold small" id="tab-profile-btn" data-bs-toggle="pill" data-bs-target="#tab-profile" type="button" role="tab">Personal</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link rounded-pill fw-semibold small" id="tab-fees-btn" data-bs-toggle="pill" data-bs-target="#tab-fees" type="button" role="tab">Fee History</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link rounded-pill fw-semibold small" id="tab-attendance-btn" data-bs-toggle="pill" data-bs-target="#tab-attendance" type="button" role="tab">Attendance</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link rounded-pill fw-semibold small" id="tab-perf-btn" data-bs-toggle="pill" data-bs-target="#tab-perf" type="button" role="tab">Tests/Marks</button>
+            </li>
+          </ul>
+          <div class="tab-content" id="pills-tabContent">
+            
+            <!-- Personal Info Tab -->
+            <div class="tab-pane fade show active p-3" id="tab-profile" role="tabpanel">
+              <div class="row g-3">
+                <div class="col-sm-6">
+                  <span class="text-muted small d-block">Parent/Guardian Name</span>
+                  <span class="fw-bold text-dark">${student.parentName}</span>
+                </div>
+                <div class="col-sm-6">
+                  <span class="text-muted small d-block">Parent Mobile Contact</span>
+                  <span class="fw-bold text-dark">${student.parentMobile}</span>
+                </div>
+                <div class="col-12">
+                  <span class="text-muted small d-block">Remarks & Teacher Notes</span>
+                  <p class="text-secondary bg-light p-3 rounded mt-1 border-start border-primary border-3" style="font-size: 0.9rem;">
+                    ${student.notes || 'No remarks recorded.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <!-- Fee History Tab -->
+            <div class="tab-pane fade p-3" id="tab-fees" role="tabpanel">
+              <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                  <thead>
+                    <tr>
+                      <th>Date Paid</th>
+                      <th>Amount</th>
+                      <th>Covered Months</th>
+                      <th>Remarks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${feeHistory.length === 0 ? `<tr><td colspan="4" class="text-center py-3 text-muted">No payments recorded.</td></tr>` : 
+                      feeHistory.map(f => `
+                        <tr>
+                          <td>${f.datePaid}</td>
+                          <td class="fw-bold">₹${f.amount}</td>
+                          <td>${(f.monthsCovered || []).join(", ") || 'N/A'}</td>
+                          <td class="text-muted small">${f.remarks || ''}</td>
+                        </tr>
+                      `).join("")
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- Attendance Tab -->
+            <div class="tab-pane fade p-3" id="tab-attendance" role="tabpanel">
+              <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
+                <table class="table table-sm align-middle">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${attHistory.length === 0 ? `<tr><td colspan="2" class="text-center py-3 text-muted">No attendance recorded.</td></tr>` : 
+                      attHistory.map(a => {
+                        let colorClass = "bg-success text-white";
+                        if (a.status === "Absent") colorClass = "bg-danger text-white";
+                        else if (a.status === "Late") colorClass = "bg-warning text-dark";
+                        return `
+                          <tr>
+                            <td>${a.date}</td>
+                            <td><span class="badge ${colorClass} rounded-pill">${a.status}</span></td>
+                          </tr>
+                        `;
+                      }).join("")
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- Performance / Marks Tab -->
+            <div class="tab-pane fade p-3" id="tab-perf" role="tabpanel">
+              <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Assessment</th>
+                      <th>Score</th>
+                      <th>Rating</th>
+                      <th>Remarks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${perfHistory.length === 0 ? `<tr><td colspan="5" class="text-center py-3 text-muted">No assessment records.</td></tr>` : 
+                      perfHistory.map(p => {
+                        let rClass = "bg-success-light text-success";
+                        if (p.rating === "Good") rClass = "bg-info-light text-info";
+                        else if (p.rating === "Average") rClass = "bg-warning-light text-warning";
+                        else if (p.rating === "Needs Improvement") rClass = "bg-danger-light text-danger";
+                        
+                        return `
+                          <tr>
+                            <td>${p.date}</td>
+                            <td class="fw-semibold">${p.assessmentName}</td>
+                            <td class="fw-bold">${p.score} / ${p.maxScore}</td>
+                            <td><span class="badge ${rClass} rounded-pill">${p.rating}</span></td>
+                            <td class="text-muted small">${p.remarks || ''}</td>
+                          </tr>
+                        `;
+                      }).join("")
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        `;
+      } catch (err) {
+        profileBody.innerHTML = `
+          <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>Failed to fetch complete student metrics: ${err.message}
+          </div>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>

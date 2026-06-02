@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Portal - Dashboard Overview</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" rel="stylesheet">
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Demo Fallback Notification Banner -->
+  <div id="demoBanner" class="demo-banner">
+    <i class="bi bi-info-circle-fill me-2"></i>Running in Demo Mode (Local Storage Fallback). 
+  </div>
+  <div class="d-flex">
+    <!-- Sidebar (Rendered by JS) -->
+    <div id="sidebarContainer"></div>
+    <!-- Main Wrapper -->
+    <div class="main-wrapper w-100">
+      
+      <!-- Top Navbar Navigation -->
+      <nav class="header-nav" id="headerNavbar"></nav>
+      <!-- Main Body Content -->
+      <main class="content-body animate-fade-in">
+        
+        <!-- Welcome Jumbotron -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap mb-4 gap-3">
+          <div>
+            <h1 class="fw-bold fs-2 mb-1">Welcome back, <span id="teacherNameSpan">Teacher</span>!</h1>
+            <p class="text-secondary m-0">Here's what is happening with your students and classes today.</p>
+          </div>
+          <div class="d-flex gap-2">
+            <a href="students.html" class="btn btn-primary rounded-pill px-3 fw-semibold"><i class="bi bi-person-plus-fill me-1"></i> Add Student</a>
+            <a href="attendance.html" class="btn btn-outline-primary rounded-pill px-3 fw-semibold"><i class="bi bi-calendar2-check-fill me-1"></i> Mark Attendance</a>
+          </div>
+        </div>
+        <!-- Dashboard Summary Analytics Cards -->
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4 mb-5">
+          <!-- Total Students -->
+          <div class="col">
+            <div class="stat-card h-100 d-flex flex-column justify-content-between">
+              <div>
+                <div class="stat-icon bg-primary-light text-primary">
+                  <i class="bi bi-people-fill"></i>
+                </div>
+                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Total Students</h6>
+                <h3 class="fw-bold m-0" id="statTotalStudents">0</h3>
+              </div>
+              <div class="border-top border-light pt-2 mt-3 small text-muted">
+                Active student accounts registered
+              </div>
+            </div>
+          </div>
+          <!-- Total Monthly Fees Collected -->
+          <div class="col">
+            <div class="stat-card h-100 d-flex flex-column justify-content-between">
+              <div>
+                <div class="stat-icon bg-success-light text-success">
+                  <i class="bi bi-currency-rupee"></i>
+                </div>
+                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Fees Collected (Jun)</h6>
+                <h3 class="fw-bold m-0" id="statFeesCollected">₹0</h3>
+              </div>
+              <div class="border-top border-light pt-2 mt-3 small text-muted">
+                Total fees cleared this academic month
+              </div>
+            </div>
+          </div>
+          <!-- Pending Fees -->
+          <div class="col">
+            <div class="stat-card h-100 d-flex flex-column justify-content-between">
+              <div>
+                <div class="stat-icon bg-warning-light text-warning">
+                  <i class="bi bi-wallet2"></i>
+                </div>
+                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Pending Fees</h6>
+                <h3 class="fw-bold m-0 text-warning" id="statPendingFees">₹0</h3>
+              </div>
+              <div class="border-top border-light pt-2 mt-3 small text-muted">
+                Includes pending and overdue accounts
+              </div>
+            </div>
+          </div>
+          <!-- Average Attendance & Overdue Count -->
+          <div class="col">
+            <div class="stat-card h-100 d-flex flex-column justify-content-between">
+              <div>
+                <div class="stat-icon bg-danger-light text-danger">
+                  <i class="bi bi-exclamation-circle-fill"></i>
+                </div>
+                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Overdue Students</h6>
+                <h3 class="fw-bold m-0 text-danger" id="statOverdueStudents">0</h3>
+              </div>
+              <div class="border-top border-light pt-2 mt-3 small text-muted">
+                Students with 2+ months due fees
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Attendance & Performance Summary Cards -->
+        <div class="row row-cols-1 row-cols-md-2 g-4 mb-5">
+          <div class="col">
+            <div class="stat-card d-flex align-items-center justify-content-between">
+              <div>
+                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Avg Attendance Rate</h6>
+                <h3 class="fw-bold m-0" id="statAvgAttendance">0%</h3>
+              </div>
+              <div class="stat-icon bg-info-light text-info m-0 fs-3">
+                <i class="bi bi-calendar-check"></i>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="stat-card d-flex align-items-center justify-content-between">
+              <div>
+                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Avg Performance Score</h6>
+                <h3 class="fw-bold m-0" id="statAvgPerformance">0 / 100</h3>
+              </div>
+              <div class="stat-icon bg-primary-light text-primary m-0 fs-3">
+                <i class="bi bi-award"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Analytical Graphs & Layout Panel -->
+        <div class="row g-4 mb-5">
+          <!-- Monthly Chart -->
+          <div class="col-lg-8">
+            <div class="custom-table-card p-4 h-100">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold m-0"><i class="bi bi-graph-up text-primary me-2"></i>Fee Collection Analytics</h5>
+                <span class="badge bg-primary-light text-primary rounded-pill">Year 2026</span>
+              </div>
+              <div style="height: 320px;">
+                <canvas id="feeCollectionChart"></canvas>
+              </div>
+            </div>
+          </div>
+          <!-- Action and Alert Reminders lists -->
+          <div class="col-lg-4">
+            <div class="custom-table-card p-4 h-100">
+              <h5 class="fw-bold mb-4"><i class="bi bi-whatsapp text-success me-2"></i>One-Click Dues Reminder</h5>
+              <p class="text-secondary small mb-3">Send quick templates instantly to parents of students with pending/overdue fees.</p>
+              
+              <div id="quickRemindersList" class="d-flex flex-column gap-3 overflow-auto" style="max-height: 320px;">
+                <!-- Dynamically populated from JS -->
+                <div class="text-center py-4 text-muted small">
+                  <i class="bi bi-shield-check text-success d-block fs-3 mb-2"></i> All fees are up to date!
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Performance Distribution Card Section -->
+        <div class="row g-4">
+          <div class="col-md-6 col-lg-4">
+            <div class="custom-table-card p-4">
+              <h5 class="fw-bold mb-4"><i class="bi bi-pie-chart-fill text-info me-2"></i>Performance Grades</h5>
+              <div style="height: 220px; position: relative;">
+                <canvas id="performanceChart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-8">
+            <div class="custom-table-card p-4 h-100">
+              <h5 class="fw-bold mb-4"><i class="bi bi-star-fill text-warning me-2"></i>Outstanding Overdue Students</h5>
+              <div class="table-responsive">
+                <table class="table align-middle">
+                  <thead>
+                    <tr>
+                      <th>Student</th>
+                      <th>Class & Subject</th>
+                      <th>Months Unpaid</th>
+                      <th>Total Due</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="overdueTableBody">
+                    <tr>
+                      <td colspan="5" class="text-center py-4 text-muted">No overdue records.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <!-- BootStrap & Charts Integrations -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Core Scripts Modules -->
+  <script type="module">
+    import { checkAuthState, calculateDues, getWhatsAppReminderLink } from './app.js';
+    import { firebaseService } from './firebase-config.js';
+    let currentTeacher = null;
+    // Load page data
+    document.addEventListener("DOMContentLoaded", async () => {
+      currentTeacher = await checkAuthState(true);
+      if (currentTeacher) {
+        document.getElementById("teacherNameSpan").textContent = currentTeacher.name;
+        await loadDashboardMetrics();
+      }
+    });
+    async function loadDashboardMetrics() {
+      try {
+        const students = await firebaseService.getStudents();
+        const payments = await firebaseService.getFeeHistory();
+        const attendance = await firebaseService.getAttendanceHistory();
+        const performance = await firebaseService.getPerformanceHistory();
+        // 1. Core Summary Metrics
+        const totalStudents = students.length;
+        document.getElementById("statTotalStudents").textContent = totalStudents;
+        // Current Month (2026-06) Fees Collected
+        const thisMonthPayments = payments.filter(p => p.datePaid && p.datePaid.startsWith("2026-06"));
+        const feesCollected = thisMonthPayments.reduce((acc, curr) => acc + Number(curr.amount), 0);
+        document.getElementById("statFeesCollected").textContent = `₹${feesCollected}`;
+        // Calculate Dues and Overdue
+        let pendingFeesSum = 0;
+        let overdueStudentsCount = 0;
+        const pendingStudentsList = [];
+        const overdueStudentsList = [];
+        students.forEach(student => {
+          const dueInfo = calculateDues(student);
+          if (dueInfo.dueAmount > 0) {
+            pendingFeesSum += dueInfo.dueAmount;
+            pendingStudentsList.push({ student, dueInfo });
+            
+            if (dueInfo.status === "Overdue") {
+              overdueStudentsCount++;
+              overdueStudentsList.push({ student, dueInfo });
+            }
+          }
+        });
+        document.getElementById("statPendingFees").textContent = `₹${pendingFeesSum}`;
+        document.getElementById("statOverdueStudents").textContent = overdueStudentsCount;
+        // 2. Average Attendance Rate
+        let totalAttPercentage = 0;
+        let studentsWithAtt = 0;
+        students.forEach(s => {
+          if (s.attendancePercentage !== undefined) {
+            totalAttPercentage += Number(s.attendancePercentage);
+            studentsWithAtt++;
+          }
+        });
+        const avgAttendance = studentsWithAtt > 0 ? Math.round(totalAttPercentage / studentsWithAtt) : 0;
+        document.getElementById("statAvgAttendance").textContent = `${avgAttendance}%`;
+        // 3. Average Performance Score
+        let totalPerfScore = 0;
+        let perfCount = 0;
+        performance.forEach(p => {
+          totalPerfScore += (Number(p.score) / Number(p.maxScore)) * 100;
+          perfCount++;
+        });
+        const avgPerformance = perfCount > 0 ? Math.round(totalPerfScore / perfCount) : 0;
+        document.getElementById("statAvgPerformance").textContent = `${avgPerformance} / 100`;
+        // Populate Dues Reminders Sidebar Panel
+        populateReminders(pendingStudentsList);
+        // Populate Overdue Student Table
+        populateOverdueTable(overdueStudentsList);
+        // Render Charts
+        renderIncomeDuesChart(payments, pendingFeesSum);
+        renderGradeDistribution(students);
+      } catch (err) {
+        console.error("Failed to load dashboard statistics:", err);
+      }
+    }
+    function populateReminders(pendingList) {
+      const container = document.getElementById("quickRemindersList");
+      if (pendingList.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-4 text-muted small">
+            <i class="bi bi-shield-check text-success d-block fs-3 mb-2"></i> All fees are up to date!
+          </div>
+        `;
+        return;
+      }
+      // Sort pending list so that highest due amounts show first
+      pendingList.sort((a, b) => b.dueInfo.dueAmount - a.dueInfo.dueAmount);
+      container.innerHTML = pendingList.map(item => {
+        const link = getWhatsAppReminderLink(item.student, item.dueInfo);
+        const badgeColor = item.dueInfo.status === "Overdue" ? "danger" : "warning";
+        return `
+          <div class="p-3 border rounded border-light bg-light-subtle d-flex justify-content-between align-items-center">
+            <div>
+              <p class="mb-0 fw-semibold text-dark small">${item.student.name}</p>
+              <p class="mb-0 text-muted small mt-0.5" style="font-size: 0.75rem;">₹${item.dueInfo.dueAmount} Due (${item.dueInfo.pendingMonths} mon)</p>
+            </div>
+            <a href="${link}" target="_blank" class="btn btn-sm btn-success rounded-pill px-2.5 d-inline-flex align-items-center gap-1" style="font-size: 0.75rem;">
+              <i class="bi bi-whatsapp"></i> Remind
+            </a>
+          </div>
+        `;
+      }).join("");
+    }
+    function populateOverdueTable(overdueList) {
+      const tbody = document.getElementById("overdueTableBody");
+      if (overdueList.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="text-center py-4 text-muted">No overdue records.</td>
+          </tr>
+        `;
+        return;
+      }
+      tbody.innerHTML = overdueList.map(item => {
+        const link = getWhatsAppReminderLink(item.student, item.dueInfo);
+        return `
+          <tr>
+            <td>
+              <span class="fw-semibold text-dark d-block">${item.student.name}</span>
+              <span class="text-muted small" style="font-size: 0.75rem;">Join Date: ${item.student.joiningDate}</span>
+            </td>
+            <td>
+              <span class="text-secondary small d-block">${item.student.class}</span>
+              <span class="text-muted small" style="font-size: 0.75rem;">${item.student.subject}</span>
+            </td>
+            <td>
+              <span class="badge bg-danger-light text-danger fw-bold rounded-pill" style="font-size: 0.75rem;">
+                ${item.dueInfo.pendingMonths} Months
+              </span>
+            </td>
+            <td>
+              <span class="fw-bold text-danger">₹${item.dueInfo.dueAmount}</span>
+            </td>
+            <td>
+              <a href="${link}" target="_blank" class="btn btn-sm btn-outline-success d-inline-flex align-items-center gap-1 rounded-pill">
+                <i class="bi bi-whatsapp"></i> Send WhatsApp
+              </a>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+    // --- CHART GRAPHICS IMPLEMENTATIONS ---
+    let collectionChartInstance = null;
+    function renderIncomeDuesChart(payments, pendingSum) {
+      const ctx = document.getElementById('feeCollectionChart').getContext('2d');
+      if (collectionChartInstance) collectionChartInstance.destroy();
+      // Aggregate mock or real payments per month in 2026 (Jan to June)
+      const months = ["01", "02", "03", "04", "05", "06"];
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+      const collections = Array(6).fill(0);
+      payments.forEach(p => {
+        if (p.datePaid && p.datePaid.startsWith("2026-")) {
+          const m = p.datePaid.substring(5, 7);
+          const index = months.indexOf(m);
+          if (index !== -1) {
+            collections[index] += Number(p.amount);
+          }
+        }
+      });
+      // Total pending sum is shown alongside current collections
+      collectionChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: monthNames,
+          datasets: [
+            {
+              label: 'Fees Received (₹)',
+              data: collections,
+              backgroundColor: '#6366f1',
+              borderRadius: 6,
+              borderSkipped: false
+            },
+            {
+              label: 'Fees Due/Unpaid (₹)',
+              data: [0, 0, 1500, 3000, 4800, pendingSum], // Rough estimation of past monthly dues mapping
+              backgroundColor: 'rgba(239, 68, 68, 0.4)',
+              borderRadius: 6,
+              borderSkipped: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                font: { family: "'Plus Jakarta Sans', sans-serif", weight: '500' }
+              }
+            }
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: {
+              grid: { color: 'rgba(0, 0, 0, 0.05)' },
+              ticks: { callback: (value) => '₹' + value }
+            }
+          }
+        }
+      });
+    }
+    let performanceChartInstance = null;
+    function renderGradeDistribution(students) {
+      const ctx = document.getElementById('performanceChart').getContext('2d');
+      if (performanceChartInstance) performanceChartInstance.destroy();
+      const ratings = { "Excellent": 0, "Good": 0, "Average": 0, "Needs Improvement": 0 };
+      students.forEach(s => {
+        if (s.performanceRating && ratings[s.performanceRating] !== undefined) {
+          ratings[s.performanceRating]++;
+        }
+      });
+      performanceChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(ratings),
+          datasets: [{
+            data: Object.values(ratings),
+            backgroundColor: [
+              '#10b981', // Success (Excellent)
+              '#06b6d4', // Info (Good)
+              '#f59e0b', // Warning (Average)
+              '#ef4444'  // Danger (Needs Improvement)
+            ],
+            borderWidth: 2,
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                boxWidth: 12,
+                font: { family: "'Plus Jakarta Sans', sans-serif", size: 10 }
+              }
+            }
+          },
+          cutout: '65%'
+        }
+      });
+    }
+  </script>
+</body>
+</html>
