@@ -440,3 +440,8 @@ body {
     min-height: 100vh;
   }
 }
+
+
+#demoBanner{
+  display: none;
+}
