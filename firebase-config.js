@@ -3,12 +3,12 @@
 // --- Firebase Configuration ---
 // Paste your actual Firebase project configuration here to switch to live database mode.
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyATQLrCdu9BUHOwWUeD80QzyGgjdw1_mUA",
+  authDomain: "teacher-management-ccffe.firebaseapp.com",
+  projectId: "teacher-management-ccffe",
+  storageBucket: "teacher-management-ccffe.firebasestorage.app",
+  messagingSenderId: "1086863318713",
+  appId: "1:1086863318713:web:ae67f29839345ee8eb4568"
 };
 // Check if credentials are still placeholder values
 const isMockMode = !firebaseConfig.apiKey || firebaseConfig.apiKey.includes("YOUR_API_KEY");
