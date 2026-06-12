@@ -136,7 +136,9 @@
     const submitBtn = document.getElementById("submitBtn");
     const submitSpinner = submitBtn.querySelector(".spinner-border");
     registerForm.addEventListener("submit", async (e) => {
+     
       e.preventDefault();
+       console.log("Submit button clicked");
       
       const name = document.getElementById("name").value.trim();
       const schoolName = document.getElementById("schoolName").value.trim();
