@@ -135,7 +135,7 @@ function renderSharedUI(teacher) {
       <div class="sidebar animate-fade-in" id="mainSidebar">
         <div class="sidebar-logo">
           <i class="bi bi-journal-bookmark-fill text-primary me-2"></i>
-          <span>Edustry Portal</span>
+          <span>Fuzion Portal</span>
         </div>
         <ul class="sidebar-menu">
           <li class="sidebar-item">
