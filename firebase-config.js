@@ -204,7 +204,15 @@ export const firebaseService = {
       MOCK_DB.set("mock_currentUser", newTeacher);
       return newTeacher;
     } else {
-      const cred = await firebaseAuthModule.createUserWithEmailAndPassword(authInstance, email, password);
+      // const cred = await firebaseAuthModule.createUserWithEmailAndPassword(authInstance, email, password);
+
+      const { createUserWithEmailAndPassword } = firebaseAuthModule;
+
+    const cred = await createUserWithEmailAndPassword(
+      authInstance,
+      email,
+      password
+  );
       const teacherData = {
         uid: cred.user.uid,
         name,
@@ -230,7 +238,14 @@ export const firebaseService = {
       MOCK_DB.set("mock_currentUser", teacher);
       return teacher;
     } else {
-      const cred = await firebaseAuthModule.signInWithEmailAndPassword(authInstance, email, password);
+      //const cred = await firebaseAuthModule.signInWithEmailAndPassword(authInstance, email, password);
+      const { signInWithEmailAndPassword } = firebaseAuthModule;
+
+      const cred = await signInWithEmailAndPassword(
+        authInstance,
+        email,
+        password
+      );
       const docSnap = await firebaseFirestoreModule.getDoc(
         firebaseFirestoreModule.doc(dbInstance, "teachers", cred.user.uid)
       );
