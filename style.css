@@ -443,5 +443,5 @@ body {
 
 
 #demoBanner{
-  display: none;
+  display: none !important;
 }
