@@ -241,8 +241,10 @@ function renderSharedUI(teacher) {
     const sidebar = document.getElementById("mainSidebar");
     if (toggle && sidebar) {
       toggle.addEventListener("click", () => {
+        console.log("Toggle clicked");
         sidebar.classList.toggle("show");
-      });
+        console.log(sidebar.className);
+        });
     }
     // Hook up header theme toggle
     const headerThemeToggle = document.getElementById("headerThemeToggle");
