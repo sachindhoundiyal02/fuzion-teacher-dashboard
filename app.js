@@ -184,7 +184,8 @@ function renderSharedUI(teacher) {
     document.getElementById("logoutBtn").addEventListener("click", async () => {
       if (confirm("Are you sure you want to log out?")) {
         await firebaseService.logoutTeacher();
-        window.location.href = "login.html";
+       // window.location.href = "login.html";
+         window.location.href = "index.html";
       }
     });
   }
