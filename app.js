@@ -3,9 +3,18 @@ import { firebaseService } from './firebase-config.js';
 // Setup global references for debugging/dev
 window.firebaseService = firebaseService;
 // Current Date configuration matching system settings
-const CURRENT_DATE_STR = "2026-06-01";
-const [CURRENT_YEAR, CURRENT_MONTH, CURRENT_DAY] = CURRENT_DATE_STR.split("-").map(Number);
-const CURRENT_YEAR_MONTH = "2026-06";
+const today = new Date();
+
+const CURRENT_DATE_STR = today.toISOString().split("T")[0];
+
+const [CURRENT_YEAR, CURRENT_MONTH, CURRENT_DAY] =
+  CURRENT_DATE_STR.split("-").map(Number);
+
+const CURRENT_YEAR_MONTH =
+  today.getFullYear() +
+  "-" +
+  String(today.getMonth() + 1).padStart(2, "0");
+
 // Global exports
 export const appConfig = {
   currentDate: CURRENT_DATE_STR,
@@ -192,15 +201,20 @@ function renderSharedUI(teacher) {
   // Render Top Header Navbar contents dynamically
   const headerNavbar = document.getElementById("headerNavbar");
   if (headerNavbar) {
+    const currentDate = new Date().toLocaleDateString("en-IN", {
+  day: "numeric",
+  month: "long",
+  year: "numeric"
+});
     headerNavbar.innerHTML = `
       <div class="d-flex align-items-center gap-3">
         <button class="btn btn-sm d-lg-none text-secondary" id="sidebarToggle" style="font-size: 1.5rem;">
           <i class="bi bi-list"></i>
         </button>
-        <div class="d-none d-md-flex align-items-center text-secondary small bg-light px-3 py-2 rounded-pill">
+       <div class="d-none d-md-flex align-items-center text-secondary small bg-light px-3 py-2 rounded-pill">
           <i class="bi bi-calendar3 me-2"></i>
-          <span>Academic Date: <strong>June 1, 2026</strong></span>
-        </div>
+          <span>Academic Date: <strong>${currentDate}</strong></span>
+      </div>
       </div>
       <div class="d-flex align-items-center gap-3">
         <!-- Theme Switcher -->
