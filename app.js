@@ -132,7 +132,7 @@ function renderSharedUI(teacher) {
     const activePage = window.location.pathname.split("/").pop() || "dashboard.html";
     
     sidebarContainer.innerHTML = `
-      <div class="sidebar animate-fade-in" id="mainSidebar">
+      <div class="sidebar" id="mainSidebar">
         <div class="sidebar-logo">
           <i class="bi bi-journal-bookmark-fill text-primary me-2"></i>
           <span>Fuzion Portal</span>
