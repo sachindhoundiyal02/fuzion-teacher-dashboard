@@ -185,7 +185,7 @@ if (isMockMode) {
 // ==========================================
 export const firebaseService = {
   // --- AUTH SERVICES ---
-  async registerTeacher(email, password, name, schoolName) {
+  async registerTeacher(email, password, name, schoolName, upiId) {
     await initPromise;
     if (window.isMockMode) {
       const teachers = MOCK_DB.get("mock_teachers");
@@ -218,6 +218,7 @@ export const firebaseService = {
         name,
         email,
         schoolName,
+        upiId,
         createdAt: new Date().toISOString()
       };
       await firebaseFirestoreModule.setDoc(
