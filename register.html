@@ -72,6 +72,15 @@
             <input type="email" id="email" class="form-control border-start-0" placeholder="teacher@school.com" required>
           </div>
         </div>
+        <div class="mb-3">
+            <label for="upiId" class="form-label fw-semibold">UPI ID</label>
+            <div class="input-group">
+              <span class="input-group-text bg-transparent border-end-0">
+              <i class="bi bi-wallet2 text-muted"></i>
+              </span>
+              <input type="text" id="upiId" class="form-control border-start-0" placeholder="example@paytm" required>
+        </div>
+</div>
         <div class="row mb-3">
           <div class="col-md-6 mb-3 mb-md-0">
             <label for="password" class="form-label fw-semibold">Password</label>
@@ -143,6 +152,7 @@
       const name = document.getElementById("name").value.trim();
       const schoolName = document.getElementById("schoolName").value.trim();
       const email = document.getElementById("email").value.trim();
+      const upiId = document.getElementById("upiId").value.trim();
       const password = document.getElementById("password").value;
       const confirmPassword = document.getElementById("confirmPassword").value;
       const termsCheck = document.getElementById("termsCheck").checked;
@@ -174,7 +184,7 @@
       submitBtn.disabled = true;
       submitSpinner.classList.remove("d-none");
       try {
-        const user = await firebaseService.registerTeacher(email, password, name, schoolName);
+        const user = await firebaseService.registerTeacher(email, password, name, schoolName,  upiId);
         successBox.textContent = `Account created successfully! Hello ${user.name}. Redirecting...`;
         successBox.classList.remove("d-none");
         
