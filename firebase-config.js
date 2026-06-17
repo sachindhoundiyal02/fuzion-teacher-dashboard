@@ -253,7 +253,21 @@ export const firebaseService = {
       if (docSnap.exists()) {
         return docSnap.data();
       } else {
-        throw new Error("Teacher profile does not exist in database.");
+          const teacherData = {
+        uid: cred.user.uid,
+        email: cred.user.email,
+        name: cred.user.email.split("@")[0],
+        schoolName: "",
+        upiId: "",
+        createdAt: new Date().toISOString()
+    };
+
+    await firebaseFirestoreModule.setDoc(
+        firebaseFirestoreModule.doc(dbInstance, "teachers", cred.user.uid),
+        teacherData
+    );
+
+    return teacherData;
       }
     }
   },
