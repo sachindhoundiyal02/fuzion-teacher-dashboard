@@ -284,7 +284,7 @@
       // Sort pending list so that highest due amounts show first
       pendingList.sort((a, b) => b.dueInfo.dueAmount - a.dueInfo.dueAmount);
       container.innerHTML = pendingList.map(item => {
-        const link = getWhatsAppReminderLink(item.student, item.dueInfo);
+        const link = getWhatsAppReminderLink(item.student, item.dueInfo, currentTeacher);
         const badgeColor = item.dueInfo.status === "Overdue" ? "danger" : "warning";
         return `
           <div class="p-3 border rounded border-light bg-light-subtle d-flex justify-content-between align-items-center">
@@ -310,7 +310,7 @@
         return;
       }
       tbody.innerHTML = overdueList.map(item => {
-        const link = getWhatsAppReminderLink(item.student, item.dueInfo);
+        const link = getWhatsAppReminderLink(item.student, item.dueInfo, currentTeacher);
         return `
           <tr>
             <td>
