@@ -1,0 +1,24 @@
+{
+  "rewrites": [
+    {
+      "source": "/dashboard",
+      "destination": "/dashboard.html"
+    },
+    {
+      "source": "/students",
+      "destination": "/students.html"
+    },
+    {
+      "source": "/attendance",
+      "destination": "/attendance.html"
+    },
+    {
+      "source": "/fees",
+      "destination": "/fees.html"
+    },
+    {
+      "source": "/reports",
+      "destination": "/reports.html"
+    }
+  ]
+}
