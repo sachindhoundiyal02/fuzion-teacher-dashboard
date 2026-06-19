@@ -577,7 +577,7 @@
           firebaseService.getPerformanceHistory(id)
         ]);
         const dues = calculateDues(student);
-        const waLink = getWhatsAppReminderLink(student, dues);
+        const waLink = getWhatsAppReminderLink(student, dues, currentTeacher);
         let ratingClass = "badge-excellent";
         if (student.performanceRating === "Good") ratingClass = "badge-good";
         else if (student.performanceRating === "Average") ratingClass = "badge-average";
