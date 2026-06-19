@@ -118,7 +118,7 @@
             <div class="row g-3">
               <div class="col-sm-6">
                 <label for="feeDatePaid" class="form-label fw-semibold">Payment Date</label>
-                <input type="date" id="feeDatePaid" class="form-control" value="2026-06-01" required>
+                <input type="date" id="feeDatePaid" class="form-control" required>
               </div>
               <div class="col-sm-6">
                 <label for="feeAmount" class="form-label fw-semibold">Amount Paid (₹)</label>
@@ -233,6 +233,10 @@
           selectEl.value = btn.dataset.id;
           // Trigger manually the selection change calculations
           selectEl.dispatchEvent(new Event("change"));
+
+             // Set current date by default
+            document.getElementById("feeDatePaid").value =
+            new Date().toISOString().split("T")[0];
           
           const modal = new bootstrap.Modal(document.getElementById("collectFeeModal"));
           modal.show();
