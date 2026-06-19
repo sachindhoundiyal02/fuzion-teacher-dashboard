@@ -103,7 +103,7 @@
         </button>
       </form>
       <div class="text-center mt-4">
-        <p class="text-secondary small">Already have an account? <a href="index.html" class="text-primary fw-bold text-decoration-none">Sign In</a></p>
+        <p class="text-secondary small">Already have an account? <a href="/index" class="text-primary fw-bold text-decoration-none">Sign In</a></p>
       </div>
     </div>
   </div>
@@ -190,7 +190,7 @@
         
         // Redirect to dashboard after delay
         setTimeout(() => {
-          window.location.href = "dashboard.html";
+          window.location.href = "/dashboard";
         }, 1200);
       } catch (err) {
         alertBox.textContent = err.message || "Registration failed. Please try again.";
