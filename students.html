@@ -172,7 +172,7 @@
               </div>
               <div class="col-md-3">
                 <label for="addLastPaid" class="form-label fw-semibold">Last Fee Paid Month</label>
-                <input type="month" id="addLastPaid" class="form-control" value="2026-05">
+                <input type="month" id="addLastPaid" class="form-control">
               </div>
               <!-- Overall Performance Initial rating -->
               <div class="col-md-6">
@@ -299,6 +299,9 @@
 
        document.getElementById("addJoiningDate").value =
         new Date().toISOString().split("T")[0];
+
+         document.getElementById("addLastPaid").value =
+          new Date().toISOString().slice(0, 7);
 
       
       if (currentTeacher) {
