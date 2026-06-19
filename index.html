@@ -89,7 +89,7 @@
         </button>
       </div> -->
       <div class="text-center mt-5">
-        <p class="text-secondary small">Don't have an account? <a href="register.html" class="text-primary fw-bold text-decoration-none">Create Account</a></p>
+        <p class="text-secondary small">Don't have an account? <a href="/register" class="text-primary fw-bold text-decoration-none">Create Account</a></p>
       </div>
     </div>
   </div>
@@ -216,7 +216,7 @@
         
         // Redirect to dashboard after delay
         setTimeout(() => {
-          window.location.href = "dashboard.html";
+          window.location.href = "/dashboard";
         }, 1200);
       } catch (err) {
         alertBox.textContent = err.message || "Failed to log in. Please try again.";
