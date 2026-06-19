@@ -149,6 +149,9 @@
     let existingAttendance = [];
     document.addEventListener("DOMContentLoaded", async () => {
       currentTeacher = await checkAuthState(true);
+
+       document.getElementById("attDate").value =
+        new Date().toISOString().split("T")[0];
     });
     const configForm = document.getElementById("attendanceConfigForm");
     const rosterPlaceholder = document.getElementById("rosterPlaceholder");
