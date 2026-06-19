@@ -164,7 +164,7 @@
               <!-- Fees and Date -->
               <div class="col-md-6">
                 <label for="addJoiningDate" class="form-label fw-semibold">Joining Date</label>
-                <input type="date" id="addJoiningDate" class="form-control" value="2026-06-01" required>
+                <input type="date" id="addJoiningDate" class="form-control" required>
               </div>
               <div class="col-md-3">
                 <label for="addMonthlyFee" class="form-label fw-semibold">Monthly Fee (₹)</label>
@@ -296,6 +296,11 @@
     // Check Auth State on load
     document.addEventListener("DOMContentLoaded", async () => {
       currentTeacher = await checkAuthState(true);
+
+       document.getElementById("addJoiningDate").value =
+        new Date().toISOString().split("T")[0];
+
+      
       if (currentTeacher) {
         await loadStudents();
       }
