@@ -190,7 +190,7 @@
         let badgeColorClass = "bg-success-light text-success";
         if (dues.status === "Pending") badgeColorClass = "bg-warning-light text-warning";
         else if (dues.status === "Overdue") badgeColorClass = "bg-danger-light text-danger";
-        const waLink = getWhatsAppReminderLink(s, dues);
+        const waLink = getWhatsAppReminderLink(s, dues, currentTeacher);
         return `
           <tr>
             <td>
