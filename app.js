@@ -29,7 +29,7 @@ export async function checkAuthState(redirectOnUnauth = true) {
       if (!teacher) {
         if (redirectOnUnauth) {
           console.log("Unauthorized user. Redirecting to login page...");
-          window.location.href = "login.html";
+          window.location.href = "/login";
         }
         resolve(null);
       } else {
@@ -150,27 +150,27 @@ function renderSharedUI(teacher) {
         </div>
         <ul class="sidebar-menu">
           <li class="sidebar-item">
-            <a href="dashboard.html" class="sidebar-link ${activePage === 'dashboard.html' ? 'active' : ''}">
+            <a href="/dashboard" class="sidebar-link ${activePage === 'dashboard.html' ? 'active' : ''}">
               <i class="bi bi-grid-1x2-fill"></i> Dashboard
             </a>
           </li>
           <li class="sidebar-item">
-            <a href="students.html" class="sidebar-link ${activePage === 'students.html' ? 'active' : ''}">
+            <a href="/students" class="sidebar-link ${activePage === 'students.html' ? 'active' : ''}">
               <i class="bi bi-people-fill"></i> Student Roster
             </a>
           </li>
           <li class="sidebar-item">
-            <a href="attendance.html" class="sidebar-link ${activePage === 'attendance.html' ? 'active' : ''}">
+            <a href="/attendance" class="sidebar-link ${activePage === 'attendance.html' ? 'active' : ''}">
               <i class="bi bi-calendar2-check-fill"></i> Attendance
             </a>
           </li>
           <li class="sidebar-item">
-            <a href="fees.html" class="sidebar-link ${activePage === 'fees.html' ? 'active' : ''}">
+            <a href="/fees" class="sidebar-link ${activePage === 'fees.html' ? 'active' : ''}">
               <i class="bi bi-currency-rupee"></i> Fee Ledger
             </a>
           </li>
           <li class="sidebar-item">
-            <a href="reports.html" class="sidebar-link ${activePage === 'reports.html' ? 'active' : ''}">
+            <a href="/reports" class="sidebar-link ${activePage === 'reports.html' ? 'active' : ''}">
               <i class="bi bi-bar-chart-line-fill"></i> Reports
             </a>
           </li>
@@ -196,7 +196,7 @@ function renderSharedUI(teacher) {
       if (confirm("Are you sure you want to log out?")) {
         await firebaseService.logoutTeacher();
        // window.location.href = "login.html";
-         window.location.href = "index.html";
+         window.location.href = "/login";
       }
     });
   }
@@ -305,7 +305,7 @@ async function loadNotifications() {
           icon: "bi-exclamation-triangle-fill",
           title: "Overdue Dues Notice",
           message: `${s.name} is overdue for ${dueInfo.pendingMonths} months (₹${dueInfo.dueAmount} due).`,
-          link: "fees.html"
+          link: "/fees"
         });
       }
     });
@@ -321,7 +321,7 @@ async function loadNotifications() {
           icon: "bi-calendar-event-fill",
           title: "Fees Due Today",
           message: `Monthly fee for ${s.name} is due today (₹${s.monthlyFee}).`,
-          link: "fees.html"
+          link: "/fees"
         });
       }
     });
@@ -333,7 +333,7 @@ async function loadNotifications() {
         icon: "bi-calendar2-x-fill",
         title: "Attendance Check",
         message: "Attendance has not been marked for today yet.",
-        link: "attendance.html"
+        link: "/attendance"
       });
     }
     // Render Notifications
