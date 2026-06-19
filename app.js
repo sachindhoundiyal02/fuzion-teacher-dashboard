@@ -97,9 +97,12 @@ export function calculateDues(student) {
   };
 }
 // Generate pre-written Whatsapp message URL
-export function getWhatsAppReminderLink(student, dueInfo) {
-  console.log(currentTeacher);
-  const message = `Hello, this is a reminder that ${student.name}'s fee for ${dueInfo.pendingMonths} month${dueInfo.pendingMonths > 1 ? 's' : ''} is pending. Kindly clear the dues of ₹${dueInfo.dueAmount} at your earliest convenience.`;
+export function getWhatsAppReminderLink(student, dueInfo, teacher) {
+ 
+const message = `Hello, this is a reminder that ${student.name}'s fee for ${dueInfo.pendingMonths} month${dueInfo.pendingMonths > 1 ? 's' : ''} is pending.
+Kindly clear the dues of ₹${dueInfo.dueAmount} at your earliest convenience.
+UPI ID: ${teacher.upiId}`;
+  
   const encodedText = encodeURIComponent(message);
   // Ensure we clean phone number
   const rawMobile = student.parentMobile || student.mobile || "";
