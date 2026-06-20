@@ -55,11 +55,6 @@
                   <label for="attSubject" class="form-label fw-semibold">Subject</label>
                   <select id="attSubject" class="form-select" required>
                     <option value="">Choose Subject...</option>
-                    <option value="Mathematics">Mathematics</option>
-                    <option value="Physics">Physics</option>
-                    <option value="Chemistry">Chemistry</option>
-                    <option value="Science">Science</option>
-                    <option value="English">English</option>
                   </select>
                 </div>
                 <button type="submit" class="btn btn-primary w-100 py-2.5 rounded-pill fw-bold">
@@ -149,6 +144,24 @@
     let existingAttendance = [];
     document.addEventListener("DOMContentLoaded", async () => {
       currentTeacher = await checkAuthState(true);
+      if (currentTeacher) {
+        const allStudents = await firebaseService.getStudents();
+
+        const uniqueSubjects = [...new Set(
+          allStudents
+            .map(s => s.subject)
+            .filter(Boolean)
+        )];
+        
+        const subjectDropdown = document.getElementById("attSubject");
+        
+        uniqueSubjects.forEach(subject => {
+          const option = document.createElement("option");
+          option.value = subject;
+          option.textContent = subject;
+          subjectDropdown.appendChild(option);
+        });
+        }
 
        document.getElementById("attDate").value =
         new Date().toISOString().split("T")[0];
