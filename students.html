@@ -157,9 +157,26 @@
                 <label for="addClass" class="form-label fw-semibold">Class</label>
                 <input type="text" id="addClass" class="form-control" placeholder="Class 10" required>
               </div>
-              <div class="col-md-6">
-                <label for="addSubject" class="form-label fw-semibold">Subject</label>
-                <input type="text" id="addSubject" class="form-control" placeholder="Mathematics" required>
+             <div class="col-md-6">
+              <label class="form-label fw-semibold">Subject</label>
+
+                <select id="addSubject" class="form-select" required>
+                  <option value="">Choose Subject...</option>
+                  <option value="Mathematics">Mathematics</option>
+                  <option value="Science">Science</option>
+                  <option value="English">English</option>
+                  <option value="Physics">Physics</option>
+                  <option value="Chemistry">Chemistry</option>
+                  <option value="Biology">Biology</option>
+                  <option value="Computer">Computer</option>
+                  <option value="Other">Other</option>
+                </select>
+
+                  <input
+                    type="text"
+                    id="customSubject"
+                    class="form-control mt-2 d-none"
+                    placeholder="Enter Subject Name">
               </div>
               <!-- Fees and Date -->
               <div class="col-md-6">
@@ -302,6 +319,20 @@
 
          document.getElementById("addLastPaid").value =
           new Date().toISOString().slice(0, 7);
+
+       // Subject dropdown logic
+  const addSubject = document.getElementById("addSubject");
+  const customSubject = document.getElementById("customSubject");
+
+  addSubject.addEventListener("change", () => {
+    if (addSubject.value === "Other") {
+      customSubject.classList.remove("d-none");
+    } else {
+      customSubject.classList.add("d-none");
+      customSubject.value = "";
+    }
+  });
+
 
       
       if (currentTeacher) {
@@ -460,7 +491,13 @@
       const parentName = document.getElementById("addParentName").value.trim();
       const parentMobile = document.getElementById("addParentMobile").value.trim();
       const clazz = document.getElementById("addClass").value.trim();
-      const subject = document.getElementById("addSubject").value.trim();
+      
+      let subject = document.getElementById("addSubject").value;
+
+      if (subject === "Other") {
+        subject = document.getElementById("customSubject").value.trim();
+      }
+      
       const joiningDate = document.getElementById("addJoiningDate").value;
       const monthlyFee = Number(document.getElementById("addMonthlyFee").value);
       const lastPaid = document.getElementById("addLastPaid").value || ""; // "YYYY-MM"
