@@ -50,23 +50,14 @@
             <div class="col-md-2 col-lg-2">
               <label class="form-label small fw-semibold text-secondary">Class</label>
               <select id="filterClass" class="form-select">
-                <option value="">All Classes</option>
-                <option value="Class 9">Class 9</option>
-                <option value="Class 10">Class 10</option>
-                <option value="Class 11">Class 11</option>
-                <option value="Class 12">Class 12</option>
+                  <option value="">All Classes</option>
               </select>
             </div>
             <div class="col-md-2 col-lg-2">
               <label class="form-label small fw-semibold text-secondary">Subject</label>
-              <select id="filterSubject" class="form-select">
+             <select id="filterSubject" class="form-select">
                 <option value="">All Subjects</option>
-                <option value="Mathematics">Mathematics</option>
-                <option value="Physics">Physics</option>
-                <option value="Chemistry">Chemistry</option>
-                <option value="Science">Science</option>
-                <option value="English">English</option>
-              </select>
+            </select>
             </div>
             <div class="col-md-2 col-lg-2">
               <label class="form-label small fw-semibold text-secondary">Fee Status</label>
@@ -335,6 +326,8 @@
          document.getElementById("addLastPaid").value =
           new Date().toISOString().slice(0, 7);
 
+      
+
        // Subject dropdown logic
   const addSubject = document.getElementById("addSubject");
   const customSubject = document.getElementById("customSubject"); 
@@ -360,8 +353,40 @@
               }
           });
 
-
-      
+          
+          const allStudents = await firebaseService.getStudents();
+          
+          // Subject filter dropdown
+          const uniqueSubjects = [...new Set(
+          allStudents
+          .map(s => s.subject)
+          .filter(Boolean)
+          )];
+          
+          const subjectDropdown = document.getElementById("filterSubject");
+          
+          uniqueSubjects.forEach(subject => {
+          const option = document.createElement("option");
+          option.value = subject;
+          option.textContent = subject;
+          subjectDropdown.appendChild(option);
+          });
+          
+          // Class filter dropdown
+          const uniqueClasses = [...new Set(
+          allStudents
+          .map(s => s.class)
+          .filter(Boolean)
+          )];
+          
+          const classDropdown = document.getElementById("filterClass");
+          
+          uniqueClasses.forEach(clazz => {
+          const option = document.createElement("option");
+          option.value = clazz;
+          option.textContent = clazz;
+          classDropdown.appendChild(option);
+          });       
       if (currentTeacher) {
         await loadStudents();
       }
