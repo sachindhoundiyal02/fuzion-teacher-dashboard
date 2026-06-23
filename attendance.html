@@ -143,36 +143,39 @@
       if (currentTeacher) {
         const allStudents = await firebaseService.getStudents();
 
-        const uniqueSubjects = [...new Set(
-          allStudents
-            .map(s => s.subject)
-            .filter(Boolean)
-        )];
-        
-        const subjectDropdown = document.getElementById("attSubject");
-        
-        uniqueSubjects.forEach(subject => {
-          const option = document.createElement("option");
-          option.value = subject;
-          option.textContent = subject;
-          subjectDropdown.appendChild(option);
-        });
-        }
+          // Subject dropdown
+    const uniqueSubjects = [...new Set(
+      allStudents
+        .map(s => s.subject)
+        .filter(Boolean)
+    )];
 
-      const uniqueClasses = [...new Set(
-          allStudents
-            .map(s => s.class)
-            .filter(Boolean)
-        )];
-        
-        const classDropdown = document.getElementById("attClass");
-        
-        uniqueClasses.forEach(clazz => {
-          const option = document.createElement("option");
-          option.value = clazz;
-          option.textContent = clazz;
-          classDropdown.appendChild(option);
-        });
+    const subjectDropdown = document.getElementById("attSubject");
+
+    uniqueSubjects.forEach(subject => {
+      const option = document.createElement("option");
+      option.value = subject;
+      option.textContent = subject;
+      subjectDropdown.appendChild(option);
+    });
+
+    // Class dropdown
+    const uniqueClasses = [...new Set(
+      allStudents
+        .map(s => s.class)
+        .filter(Boolean)
+    )];
+
+    const classDropdown = document.getElementById("attClass");
+
+    uniqueClasses.forEach(clazz => {
+      const option = document.createElement("option");
+      option.value = clazz;
+      option.textContent = clazz;
+      classDropdown.appendChild(option);
+    });
+  }
+
 
        document.getElementById("attDate").value =
         new Date().toISOString().split("T")[0];
