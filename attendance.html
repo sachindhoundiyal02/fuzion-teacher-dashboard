@@ -43,13 +43,9 @@
                 </div>
                 <div class="mb-3">
                   <label for="attClass" class="form-label fw-semibold">Class</label>
-                  <select id="attClass" class="form-select" required>
+                 <select id="attClass" class="form-select" required>
                     <option value="">Choose Class...</option>
-                    <option value="Class 9">Class 9</option>
-                    <option value="Class 10">Class 10</option>
-                    <option value="Class 11">Class 11</option>
-                    <option value="Class 12">Class 12</option>
-                  </select>
+                </select>
                 </div>
                 <div class="mb-4">
                   <label for="attSubject" class="form-label fw-semibold">Subject</label>
@@ -162,6 +158,21 @@
           subjectDropdown.appendChild(option);
         });
         }
+
+      const uniqueClasses = [...new Set(
+          allStudents
+            .map(s => s.class)
+            .filter(Boolean)
+        )];
+        
+        const classDropdown = document.getElementById("attClass");
+        
+        uniqueClasses.forEach(clazz => {
+          const option = document.createElement("option");
+          option.value = clazz;
+          option.textContent = clazz;
+          classDropdown.appendChild(option);
+        });
 
        document.getElementById("attDate").value =
         new Date().toISOString().split("T")[0];
