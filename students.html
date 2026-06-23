@@ -153,9 +153,24 @@
                 <input type="tel" id="addParentMobile" class="form-control" placeholder="9876543211" required>
               </div>
               <!-- Education Info -->
-              <div class="col-md-6">
-                <label for="addClass" class="form-label fw-semibold">Class</label>
-                <input type="text" id="addClass" class="form-control" placeholder="Class 10" required>
+             <div class="col-md-6">
+                  <label for="addClass" class="form-label fw-semibold">Class</label>
+              
+                  <select id="addClass" class="form-select" required>
+                      <option value="">Select Class</option>
+                      <option value="Class 9">Class 9</option>
+                      <option value="Class 10">Class 10</option>
+                      <option value="Class 11">Class 11</option>
+                      <option value="Class 12">Class 12</option>
+                      <option value="Spoken English">Spoken English</option>
+                      <option value="Other">Other</option>
+                  </select>
+              
+                  <input
+                      type="text"
+                      id="customClass"
+                      class="form-control mt-2 d-none"
+                      placeholder="Enter Class Name">
               </div>
              <div class="col-md-6">
               <label class="form-label fw-semibold">Subject</label>
@@ -322,7 +337,7 @@
 
        // Subject dropdown logic
   const addSubject = document.getElementById("addSubject");
-  const customSubject = document.getElementById("customSubject");
+  const customSubject = document.getElementById("customSubject"); 
 
   addSubject.addEventListener("change", () => {
     if (addSubject.value === "Other") {
@@ -332,6 +347,18 @@
       customSubject.value = "";
     }
   });
+
+          const addClass = document.getElementById("addClass");
+          const customClass = document.getElementById("customClass");
+          
+          addClass.addEventListener("change", () => {
+              if (addClass.value === "Other") {
+                  customClass.classList.remove("d-none");
+              } else {
+                  customClass.classList.add("d-none");
+                  customClass.value = "";
+              }
+          });
 
 
       
@@ -490,7 +517,11 @@
       const mobile = document.getElementById("addMobile").value.trim();
       const parentName = document.getElementById("addParentName").value.trim();
       const parentMobile = document.getElementById("addParentMobile").value.trim();
-      const clazz = document.getElementById("addClass").value.trim();
+      let clazz = document.getElementById("addClass").value;
+
+      if (clazz === "Other") {
+          clazz = document.getElementById("customClass").value.trim();
+      }
       
       let subject = document.getElementById("addSubject").value;
 
