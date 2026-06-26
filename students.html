@@ -163,27 +163,63 @@
                       class="form-control mt-2 d-none"
                       placeholder="Enter Class Name">
               </div>
-             <div class="col-md-6">
-              <label class="form-label fw-semibold">Subject</label>
-
-                <select id="addSubject" class="form-select" required>
-                  <option value="">Choose Subject...</option>
-                  <option value="Mathematics">Mathematics</option>
-                  <option value="Science">Science</option>
-                  <option value="English">English</option>
-                  <option value="Physics">Physics</option>
-                  <option value="Chemistry">Chemistry</option>
-                  <option value="Biology">Biology</option>
-                  <option value="Computer">Computer</option>
-                  <option value="Other">Other</option>
-                </select>
-
-                  <input
-                    type="text"
-                    id="customSubject"
-                    class="form-control mt-2 d-none"
-                    placeholder="Enter Subject Name">
-              </div>
+          <div class="col-md-6">
+                <label class="form-label fw-semibold">Subjects</label>
+            
+                <div class="border rounded p-3" style="max-height:220px;overflow-y:auto;">
+            
+                    <div class="form-check">
+                        <input class="form-check-input subject-checkbox" type="checkbox" value="Mathematics" id="subMath">
+                        <label class="form-check-label" for="subMath">Mathematics</label>
+                    </div>
+            
+                    <div class="form-check">
+                        <input class="form-check-input subject-checkbox" type="checkbox" value="Science" id="subScience">
+                        <label class="form-check-label" for="subScience">Science</label>
+                    </div>
+            
+                    <div class="form-check">
+                        <input class="form-check-input subject-checkbox" type="checkbox" value="English" id="subEnglish">
+                        <label class="form-check-label" for="subEnglish">English</label>
+                    </div>
+            
+                    <div class="form-check">
+                        <input class="form-check-input subject-checkbox" type="checkbox" value="Physics" id="subPhysics">
+                        <label class="form-check-label" for="subPhysics">Physics</label>
+                    </div>
+            
+                    <div class="form-check">
+                        <input class="form-check-input subject-checkbox" type="checkbox" value="Chemistry" id="subChemistry">
+                        <label class="form-check-label" for="subChemistry">Chemistry</label>
+                    </div>
+            
+                    <div class="form-check">
+                        <input class="form-check-input subject-checkbox" type="checkbox" value="Biology" id="subBiology">
+                        <label class="form-check-label" for="subBiology">Biology</label>
+                    </div>
+            
+                    <div class="form-check">
+                        <input class="form-check-input subject-checkbox" type="checkbox" value="Computer" id="subComputer">
+                        <label class="form-check-label" for="subComputer">Computer</label>
+                    </div>
+            
+                    <hr>
+            
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="otherSubjectCheck">
+                        <label class="form-check-label" for="otherSubjectCheck">
+                            Other
+                        </label>
+                    </div>
+            
+                    <input
+                        type="text"
+                        id="customSubject"
+                        class="form-control mt-2 d-none"
+                        placeholder="Enter Subject Name">
+            
+                </div>
+            </div>
               <!-- Fees and Date -->
               <div class="col-md-6">
                 <label for="addJoiningDate" class="form-label fw-semibold">Joining Date</label>
@@ -329,17 +365,30 @@
       
 
        // Subject dropdown logic
-  const addSubject = document.getElementById("addSubject");
-  const customSubject = document.getElementById("customSubject"); 
+      // const addSubject = document.getElementById("addSubject");
+      // const customSubject = document.getElementById("customSubject"); 
+    
+      // addSubject.addEventListener("change", () => {
+      //   if (addSubject.value === "Other") {
+      //     customSubject.classList.remove("d-none");
+      //   } else {
+      //     customSubject.classList.add("d-none");
+      //     customSubject.value = "";
+      //   }
+      // });
 
-  addSubject.addEventListener("change", () => {
-    if (addSubject.value === "Other") {
-      customSubject.classList.remove("d-none");
-    } else {
-      customSubject.classList.add("d-none");
-      customSubject.value = "";
-    }
-  });
+
+          const otherSubjectCheck = document.getElementById("otherSubjectCheck");
+          const customSubject = document.getElementById("customSubject");
+          
+          otherSubjectCheck.addEventListener("change", () => {
+              if (otherSubjectCheck.checked) {
+                  customSubject.classList.remove("d-none");
+              } else {
+                  customSubject.classList.add("d-none");
+                  customSubject.value = "";
+              }
+          });
 
           const addClass = document.getElementById("addClass");
           const customClass = document.getElementById("customClass");
@@ -548,20 +597,45 @@
           clazz = document.getElementById("customClass").value.trim();
       }
       
-      let subject = document.getElementById("addSubject").value;
+      // let subject = document.getElementById("addSubject").value;
 
-      if (subject === "Other") {
-        subject = document.getElementById("customSubject").value.trim();
-      }
+      // if (subject === "Other") {
+      //   subject = document.getElementById("customSubject").value.trim();
+      // }
+
+      let subject = [];
+
+        document.querySelectorAll(".subject-checkbox:checked").forEach(cb => {
+            subject.push(cb.value);
+        });
+        
+        if (document.getElementById("otherSubjectCheck").checked) {
+            const customSubject = document.getElementById("customSubject").value.trim();
+        
+            if (customSubject) {
+                subject.push(customSubject);
+            }
+        }
+
+
       
       const joiningDate = document.getElementById("addJoiningDate").value;
       const monthlyFee = Number(document.getElementById("addMonthlyFee").value);
       const lastPaid = document.getElementById("addLastPaid").value || ""; // "YYYY-MM"
       const perf = document.getElementById("addPerformance").value;
       const notes = document.getElementById("addNotes").value.trim();
-      if (!name || !mobile || !parentName || !parentMobile || !clazz || !subject || !joiningDate || !monthlyFee) {
-        showToast("Please fill all required inputs.", "danger");
-        return;
+      if (
+          !name ||
+          !mobile ||
+          !parentName ||
+          !parentMobile ||
+          !clazz ||
+          subject.length === 0 ||
+          !joiningDate ||
+          !monthlyFee
+      ) {
+          showToast("Please fill all required inputs.", "danger");
+          return;
       }
       try {
         const student = {
