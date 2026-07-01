@@ -144,11 +144,11 @@
         const allStudents = await firebaseService.getStudents();
 
           // Subject dropdown
-    const uniqueSubjects = [...new Set(
-      allStudents
-        .map(s => s.subject)
-        .filter(Boolean)
-    )];
+      const uniqueSubjects = [...new Set(
+        allStudents
+            .flatMap(s => Array.isArray(s.subject) ? s.subject : [s.subject])
+            .filter(Boolean)
+          )];
 
     const subjectDropdown = document.getElementById("attSubject");
 
@@ -196,7 +196,7 @@
       try {
         // Fetch all students and filter locally by class & subject
         const allStudents = await firebaseService.getStudents();
-        loadedStudents = allStudents.filter(s => s.class === clazz && s.subject === subject);
+        loadedStudents = allStudents.filter(s => s.class === clazz && ( Array.isArray(s.subject) ? s.subject.includes(subject) : s.subject === subject ) );
         
         if (loadedStudents.length === 0) {
           showToast(`No students enrolled in ${clazz} taking ${subject}.`, "warning");
