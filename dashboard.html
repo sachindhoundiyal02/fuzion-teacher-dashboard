@@ -319,7 +319,7 @@
             </td>
             <td>
               <span class="text-secondary small d-block">${item.student.class}</span>
-              <span class="text-muted small" style="font-size: 0.75rem;">${item.student.subject}</span>
+              <span class="text-muted small" style="font-size: 0.75rem;">${Array.isArray(item.student.subject) ? item.student.subject.join(", ") : item.student.subject}</span>
             </td>
             <td>
               <span class="badge bg-danger-light text-danger fw-bold rounded-pill" style="font-size: 0.75rem;">
