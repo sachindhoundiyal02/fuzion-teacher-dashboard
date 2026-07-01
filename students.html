@@ -406,10 +406,10 @@
           const allStudents = await firebaseService.getStudents();
           
           // Subject filter dropdown
-          const uniqueSubjects = [...new Set(
-          allStudents
-          .map(s => s.subject)
-          .filter(Boolean)
+         const uniqueSubjects = [...new Set(
+              allStudents
+                  .flatMap(s => Array.isArray(s.subject) ? s.subject : [s.subject])
+                  .filter(Boolean)
           )];
           
           const subjectDropdown = document.getElementById("filterSubject");
@@ -492,7 +492,7 @@
             </td>
             <td>
               <span class="text-secondary small d-block">${s.class}</span>
-              <span class="text-muted small" style="font-size: 0.75rem;">${s.subject}</span>
+              <span class="text-muted small" style="font-size: 0.75rem;">${Array.isArray(s.subject) ? s.subject.join(", ") : s.subject}</span>
             </td>
             <td>
               <span class="text-secondary small d-block">${s.parentName}</span>
@@ -570,7 +570,13 @@
         
         // Filter dropdown matches
         const matchesClass = !clazz || s.class === clazz;
-        const matchesSubj = !subject || s.subject === subject;
+       const matchesSubj =
+            !subject ||
+            (
+              Array.isArray(s.subject)
+                ? s.subject.includes(subject)
+                : s.subject === subject
+            );
         const matchesFee = !feeStatus || dues.status === feeStatus;
         const matchesPerf = !perfRating || s.performanceRating === perfRating;
         return matchesSearch && matchesClass && matchesSubj && matchesFee && matchesPerf;
@@ -654,6 +660,20 @@
         };
         await firebaseService.addStudent(student);
         addStudentForm.reset();
+        document.querySelectorAll(".subject-checkbox").forEach(cb => cb.checked = false);
+
+        document.getElementById("otherSubjectCheck").checked = false;
+        document.getElementById("customSubject").value = "";
+        document.getElementById("customSubject").classList.add("d-none");
+
+        document.getElementById("addJoiningDate").value =
+            new Date().toISOString().split("T")[0];
+        
+        document.getElementById("addLastPaid").value =
+            new Date().toISOString().slice(0, 7);
+        
+        
+        
         addStudentModal.hide();
         showToast("Student registered successfully!");
         await loadStudents();
@@ -757,7 +777,7 @@
             </div>
             <div>
               <h3 class="fw-bold m-0">${student.name}</h3>
-              <p class="text-secondary mb-1">${student.class} | ${student.subject}</p>
+              <p class="text-secondary mb-1"> ${student.class} | ${Array.isArray(student.subject) ? student.subject.join(", ") : student.subject} </p>
               <div class="d-flex gap-2">
                 <span class="badge-premium ${ratingClass}">${student.performanceRating || 'Good'}</span>
                 <span class="badge bg-primary-light text-primary fw-semibold d-inline-flex align-items-center">Join Date: ${student.joiningDate}</span>
