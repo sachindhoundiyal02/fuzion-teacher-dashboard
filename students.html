@@ -289,7 +289,23 @@
               </div>
               <div class="col-md-6">
                 <label for="editClass" class="form-label fw-semibold">Class</label>
-                <input type="text" id="editClass" class="form-control" required>
+                <select id="editClass" class="form-select" required>
+                    <option value="">Select Class</option>
+                    <option value="Class 9">Class 9</option>
+                    <option value="Class 10">Class 10</option>
+                    <option value="Class 11">Class 11</option>
+                    <option value="Class 12">Class 12</option>
+                    <option value="BCA">BCA</option>
+                    <option value="B.Tech">B.Tech</option>
+                    <option value="B.Com">B.Com</option>
+                    <option value="Other">Other</option>
+                </select>
+                
+                <input
+                    type="text"
+                    id="editCustomClass"
+                    class="form-control mt-2 d-none"
+                    placeholder="Enter Class Name">
               </div>
              <div class="col-md-6">
                   <label class="form-label fw-semibold">Subjects</label>
@@ -414,6 +430,19 @@
 
          document.getElementById("addLastPaid").value =
           new Date().toISOString().slice(0, 7);
+
+
+      const editClass = document.getElementById("editClass");
+      const editCustomClass = document.getElementById("editCustomClass");
+      
+      editClass.addEventListener("change", () => {
+          if (editClass.value === "Other") {
+              editCustomClass.classList.remove("d-none");
+          } else {
+              editCustomClass.classList.add("d-none");
+              editCustomClass.value = "";
+          }
+      });
 
       
 
@@ -756,7 +785,20 @@
       document.getElementById("editMobile").value = student.mobile;
       document.getElementById("editParentName").value = student.parentName;
       document.getElementById("editParentMobile").value = student.parentMobile;
-      document.getElementById("editClass").value = student.class;
+      const editClass = document.getElementById("editClass");
+      const editCustomClass = document.getElementById("editCustomClass");
+      
+      const classOptions = [...editClass.options].map(opt => opt.value);
+      
+      if (classOptions.includes(student.class)) {
+          editClass.value = student.class;
+          editCustomClass.classList.add("d-none");
+          editCustomClass.value = "";
+      } else {
+          editClass.value = "Other";
+          editCustomClass.classList.remove("d-none");
+          editCustomClass.value = student.class;
+      }
       
      // Reset all checkboxes
       document.querySelectorAll(".edit-subject-checkbox").forEach(cb => {
@@ -801,7 +843,12 @@
       const mobile = document.getElementById("editMobile").value.trim();
       const parentName = document.getElementById("editParentName").value.trim();
       const parentMobile = document.getElementById("editParentMobile").value.trim();
-      const clazz = document.getElementById("editClass").value.trim();
+      let clazz = document.getElementById("editClass").value;
+      
+      if (clazz === "Other") {
+          clazz = document.getElementById("editCustomClass").value.trim();
+      }
+      
       let subject = [];
 
         document.querySelectorAll(".edit-subject-checkbox:checked").forEach(cb => {
