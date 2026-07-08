@@ -291,9 +291,62 @@
                 <label for="editClass" class="form-label fw-semibold">Class</label>
                 <input type="text" id="editClass" class="form-control" required>
               </div>
-              <div class="col-md-6">
-                <label for="editSubject" class="form-label fw-semibold">Subject</label>
-                <input type="text" id="editSubject" class="form-control" required>
+             <div class="col-md-6">
+                  <label class="form-label fw-semibold">Subjects</label>
+              
+                  <div class="border rounded p-3" style="max-height:220px;overflow-y:auto;">
+              
+                      <div class="form-check">
+                          <input class="form-check-input edit-subject-checkbox" type="checkbox" value="Mathematics" id="editSubMath">
+                          <label class="form-check-label" for="editSubMath">Mathematics</label>
+                      </div>
+              
+                      <div class="form-check">
+                          <input class="form-check-input edit-subject-checkbox" type="checkbox" value="Science" id="editSubScience">
+                          <label class="form-check-label" for="editSubScience">Science</label>
+                      </div>
+              
+                      <div class="form-check">
+                          <input class="form-check-input edit-subject-checkbox" type="checkbox" value="English" id="editSubEnglish">
+                          <label class="form-check-label" for="editSubEnglish">English</label>
+                      </div>
+              
+                      <div class="form-check">
+                          <input class="form-check-input edit-subject-checkbox" type="checkbox" value="Physics" id="editSubPhysics">
+                          <label class="form-check-label" for="editSubPhysics">Physics</label>
+                      </div>
+              
+                      <div class="form-check">
+                          <input class="form-check-input edit-subject-checkbox" type="checkbox" value="Chemistry" id="editSubChemistry">
+                          <label class="form-check-label" for="editSubChemistry">Chemistry</label>
+                      </div>
+              
+                      <div class="form-check">
+                          <input class="form-check-input edit-subject-checkbox" type="checkbox" value="Biology" id="editSubBiology">
+                          <label class="form-check-label" for="editSubBiology">Biology</label>
+                      </div>
+              
+                      <div class="form-check">
+                          <input class="form-check-input edit-subject-checkbox" type="checkbox" value="Computer" id="editSubComputer">
+                          <label class="form-check-label" for="editSubComputer">Computer</label>
+                      </div>
+              
+                      <hr>
+              
+                      <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="editOtherSubjectCheck">
+                          <label class="form-check-label" for="editOtherSubjectCheck">
+                              Other
+                          </label>
+                      </div>
+              
+                      <input
+                          type="text"
+                          id="editCustomSubject"
+                          class="form-control mt-2 d-none"
+                          placeholder="Enter Subject Name">
+              
+                  </div>
               </div>
               <div class="col-md-6">
                 <label for="editJoiningDate" class="form-label fw-semibold">Joining Date</label>
@@ -376,6 +429,17 @@
       //     customSubject.value = "";
       //   }
       // });
+      const editOtherSubjectCheck = document.getElementById("editOtherSubjectCheck");
+      const editCustomSubject = document.getElementById("editCustomSubject");
+      
+      editOtherSubjectCheck.addEventListener("change", () => {
+          if (editOtherSubjectCheck.checked) {
+              editCustomSubject.classList.remove("d-none");
+          } else {
+              editCustomSubject.classList.add("d-none");
+              editCustomSubject.value = "";
+          }
+      });
 
 
           const otherSubjectCheck = document.getElementById("otherSubjectCheck");
@@ -693,7 +757,35 @@
       document.getElementById("editParentName").value = student.parentName;
       document.getElementById("editParentMobile").value = student.parentMobile;
       document.getElementById("editClass").value = student.class;
-      document.getElementById("editSubject").value = student.subject;
+      
+     // Reset all checkboxes
+      document.querySelectorAll(".edit-subject-checkbox").forEach(cb => {
+          cb.checked = false;
+      });
+      
+      document.getElementById("editOtherSubjectCheck").checked = false;
+      document.getElementById("editCustomSubject").value = "";
+      document.getElementById("editCustomSubject").classList.add("d-none");
+      
+      // Get subjects as array
+      const subjects = Array.isArray(student.subject)
+          ? student.subject
+          : [student.subject];
+      
+      // Check matching subjects
+      subjects.forEach(subject => {
+          const checkbox = [...document.querySelectorAll(".edit-subject-checkbox")]
+              .find(cb => cb.value === subject);
+      
+          if (checkbox) {
+              checkbox.checked = true;
+          } else {
+              // Custom subject
+              document.getElementById("editOtherSubjectCheck").checked = true;
+              document.getElementById("editCustomSubject").classList.remove("d-none");
+              document.getElementById("editCustomSubject").value = subject;
+          }
+      });
       document.getElementById("editJoiningDate").value = student.joiningDate;
       document.getElementById("editMonthlyFee").value = student.monthlyFee;
       document.getElementById("editLastPaid").value = student.lastFeePaidMonth || "";
@@ -710,7 +802,19 @@
       const parentName = document.getElementById("editParentName").value.trim();
       const parentMobile = document.getElementById("editParentMobile").value.trim();
       const clazz = document.getElementById("editClass").value.trim();
-      const subject = document.getElementById("editSubject").value.trim();
+      let subject = [];
+
+        document.querySelectorAll(".edit-subject-checkbox:checked").forEach(cb => {
+            subject.push(cb.value);
+        });
+        
+        if (document.getElementById("editOtherSubjectCheck").checked) {
+            const customSubject = document.getElementById("editCustomSubject").value.trim();
+        
+            if (customSubject) {
+                subject.push(customSubject);
+            }
+        }
       const joiningDate = document.getElementById("editJoiningDate").value;
       const monthlyFee = Number(document.getElementById("editMonthlyFee").value);
       const lastPaid = document.getElementById("editLastPaid").value;
