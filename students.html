@@ -737,6 +737,11 @@
           return;
       }
       try {
+
+        
+        const nextDueDate = new Date(joiningDate);
+        nextDueDate.setMonth(nextDueDate.getMonth() + 1);
+        
         const student = {
           name,
           mobile,
@@ -745,11 +750,16 @@
           class: clazz,
           subject,
           joiningDate,
+
+          nextDueDate: nextDueDate.toISOString().split("T")[0],
+          
           monthlyFee,
           lastFeePaidMonth: "",
           performanceRating: perf,
           notes,
           attendancePercentage: 0
+ 
+          
         };
         await firebaseService.addStudent(student);
         addStudentForm.reset();
@@ -847,6 +857,7 @@
       const student = cachedStudents.find(s => s.id === id);
       const name = document.getElementById("editName").value.trim();
       const mobile = document.getElementById("editMobile").value.trim();
+      
       const parentName = document.getElementById("editParentName").value.trim();
       const parentMobile = document.getElementById("editParentMobile").value.trim();
       let clazz = document.getElementById("editClass").value;
@@ -874,9 +885,14 @@
       const perf = document.getElementById("editPerformance").value;
       const notes = document.getElementById("editNotes").value.trim();
       try {
+        
+        const nextDueDate = new Date(joiningDate);
+        nextDueDate.setMonth(nextDueDate.getMonth() + 1);
+
+        
         const updateData = {
           name, mobile, parentName, parentMobile, class: clazz, subject,
-          joiningDate, monthlyFee, lastFeePaidMonth: student.lastFeePaidMonth || "", performanceRating: perf, notes
+          joiningDate, nextDueDate: nextDueDate.toISOString().split("T")[0], monthlyFee, lastFeePaidMonth: student.lastFeePaidMonth || "", performanceRating: perf, notes
         };
         await firebaseService.updateStudent(id, updateData);
         editStudentModal.hide();
