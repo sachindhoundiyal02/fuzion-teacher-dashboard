@@ -70,7 +70,7 @@
                 <tr>
                   <th>Student Name</th>
                   <th>Monthly Fee</th>
-                  <th>Last Month Paid</th>
+                  <th>Next Due Date</th>
                   <th>Status Indicator</th>
                   <th>Pending Months</th>
                   <th>Amount Dues</th>
@@ -199,7 +199,7 @@
             </td>
             <td class="fw-semibold">₹${s.monthlyFee}</td>
             <td>
-              <span class="badge bg-secondary-light text-secondary rounded-pill px-2.5">${s.lastFeePaidMonth || 'Never Paid'}</span>
+              <span class="badge bg-secondary-light text-secondary rounded-pill px-2.5">${s.nextDueDate || 'Not Generated'}</span>
             </td>
             <td>
               <span class="badge ${badgeColorClass} fw-bold rounded-pill px-2.5 py-1.5" style="font-size: 0.75rem;">
