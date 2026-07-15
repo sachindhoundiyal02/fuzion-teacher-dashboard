@@ -229,10 +229,10 @@
                 <label for="addMonthlyFee" class="form-label fw-semibold">Monthly Fee (₹)</label>
                 <input type="number" id="addMonthlyFee" class="form-control" placeholder="1500" required>
               </div>
-              <div class="col-md-3">
+              <!-- <div class="col-md-3">
                 <label for="addLastPaid" class="form-label fw-semibold">Last Fee Paid Month</label>
                 <input type="month" id="addLastPaid" class="form-control">
-              </div>
+              </div> -->
               <!-- Overall Performance Initial rating -->
               <div class="col-md-6">
                 <label for="addPerformance" class="form-label fw-semibold">Performance Rating</label>
@@ -372,10 +372,10 @@
                 <label for="editMonthlyFee" class="form-label fw-semibold">Monthly Fee (₹)</label>
                 <input type="number" id="editMonthlyFee" class="form-control" required>
               </div>
-              <div class="col-md-3">
+              <!-- <div class="col-md-3">
                 <label for="editLastPaid" class="form-label fw-semibold">Last Fee Paid Month</label>
                 <input type="month" id="editLastPaid" class="form-control">
-              </div>
+              </div> -->
               <div class="col-md-6">
                 <label for="editPerformance" class="form-label fw-semibold">Performance Rating</label>
                 <select id="editPerformance" class="form-select">
@@ -428,8 +428,8 @@
        document.getElementById("addJoiningDate").value =
         new Date().toISOString().split("T")[0];
 
-         document.getElementById("addLastPaid").value =
-          new Date().toISOString().slice(0, 7);
+         // document.getElementById("addLastPaid").value =
+         //  new Date().toISOString().slice(0, 7);
 
 
       const editClass = document.getElementById("editClass");
@@ -720,7 +720,7 @@
       
       const joiningDate = document.getElementById("addJoiningDate").value;
       const monthlyFee = Number(document.getElementById("addMonthlyFee").value);
-      const lastPaid = document.getElementById("addLastPaid").value || ""; // "YYYY-MM"
+      // const lastPaid = document.getElementById("addLastPaid").value || "";  
       const perf = document.getElementById("addPerformance").value;
       const notes = document.getElementById("addNotes").value.trim();
       if (
@@ -746,7 +746,7 @@
           subject,
           joiningDate,
           monthlyFee,
-          lastFeePaidMonth: lastPaid,
+          lastFeePaidMonth: "",
           performanceRating: perf,
           notes,
           attendancePercentage: 0
@@ -759,11 +759,16 @@
         document.getElementById("customSubject").value = "";
         document.getElementById("customSubject").classList.add("d-none");
 
+       
+        document.getElementById("customClass").value = "";
+        document.getElementById("customClass").classList.add("d-none");
+        document.getElementById("addClass").value = "";
+
         document.getElementById("addJoiningDate").value =
             new Date().toISOString().split("T")[0];
         
-        document.getElementById("addLastPaid").value =
-            new Date().toISOString().slice(0, 7);
+        // document.getElementById("addLastPaid").value =
+        //     new Date().toISOString().slice(0, 7);
         
         
         
@@ -830,7 +835,7 @@
       });
       document.getElementById("editJoiningDate").value = student.joiningDate;
       document.getElementById("editMonthlyFee").value = student.monthlyFee;
-      document.getElementById("editLastPaid").value = student.lastFeePaidMonth || "";
+      // document.getElementById("editLastPaid").value = student.lastFeePaidMonth || "";
       document.getElementById("editPerformance").value = student.performanceRating || "Good";
       document.getElementById("editNotes").value = student.notes || "";
       editStudentModal.show();
@@ -839,6 +844,7 @@
       e.preventDefault();
       
       const id = document.getElementById("editStudentId").value;
+      const student = cachedStudents.find(s => s.id === id);
       const name = document.getElementById("editName").value.trim();
       const mobile = document.getElementById("editMobile").value.trim();
       const parentName = document.getElementById("editParentName").value.trim();
@@ -864,13 +870,13 @@
         }
       const joiningDate = document.getElementById("editJoiningDate").value;
       const monthlyFee = Number(document.getElementById("editMonthlyFee").value);
-      const lastPaid = document.getElementById("editLastPaid").value;
+      // const lastPaid = document.getElementById("editLastPaid").value;
       const perf = document.getElementById("editPerformance").value;
       const notes = document.getElementById("editNotes").value.trim();
       try {
         const updateData = {
           name, mobile, parentName, parentMobile, class: clazz, subject,
-          joiningDate, monthlyFee, lastFeePaidMonth: lastPaid, performanceRating: perf, notes
+          joiningDate, monthlyFee, lastFeePaidMonth: student.lastFeePaidMonth || "", performanceRating: perf, notes
         };
         await firebaseService.updateStudent(id, updateData);
         editStudentModal.hide();
