@@ -564,11 +564,16 @@
         if (s.performanceRating === "Good") badgeClass = "badge-good";
         else if (s.performanceRating === "Average") badgeClass = "badge-average";
         else if (s.performanceRating === "Needs Improvement") badgeClass = "badge-needs-improvement";
-        let feeBadge = `<span class="badge bg-success-light text-success fw-semibold">Paid</span>`;
+       let feeBadge = `<span class="badge bg-info-light text-info fw-semibold">Not Due</span>`;
+
         if (dues.status === "Pending") {
           feeBadge = `<span class="badge bg-warning-light text-warning fw-semibold">Pending (₹${dues.dueAmount})</span>`;
-        } else if (dues.status === "Overdue") {
+        } 
+        else if (dues.status === "Overdue") {
           feeBadge = `<span class="badge bg-danger-light text-danger fw-semibold">Overdue (₹${dues.dueAmount})</span>`;
+        }
+        else if (dues.status === "Paid") {
+          feeBadge = `<span class="badge bg-success-light text-success fw-semibold">Paid</span>`;
         }
         return `
           <tr>
