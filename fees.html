@@ -282,25 +282,41 @@
       `;
       duesBanner.classList.remove("d-none");
       // Generate checklist checkboxes for due months
-      if (dues.dueMonthsList.length > 0) {
-        checkGrid.innerHTML = dues.dueMonthsList.map(month => `
-          <div class="form-check">
-            <input type="checkbox" name="monthsCheck" value="${month}" class="form-check-input month-cb" checked>
-            <label class="form-check-label small fw-semibold text-secondary">${month}</label>
-          </div>
-        `).join("");
-        
-        // Re-adjust payment sum calculations when checkboxes toggled
-        document.querySelectorAll(".month-cb").forEach(cb => {
-          cb.addEventListener("change", recalculateCheckboxSum);
-        });
-        
-        checkContainer.style.display = "block";
-        recalculateCheckboxSum();
-      } else {
-        checkContainer.style.display = "none";
-      }
+    if (dues.billingCycles && dues.billingCycles.length > 0) {
+    checkGrid.innerHTML = dues.billingCycles.map(cycle => `
+      <div class="form-check mb-2">
+        <input
+          type="checkbox"
+          name="billingCycleCheck"
+          value="${cycle.to}"
+          class="form-check-input billing-cycle-cb"
+          data-from="${cycle.from}"
+          data-to="${cycle.to}"
+          data-amount="${student.monthlyFee}"
+          checked
+        >
+
+        <label class="form-check-label small fw-semibold text-secondary">
+          ${cycle.from} → ${cycle.to}
+          <span class="ms-2 text-success">
+            ₹${student.monthlyFee}
+          </span>
+        </label>
+      </div>
+    `).join("");
+
+    document.querySelectorAll(".billing-cycle-cb").forEach(cb => {
+        cb.addEventListener("change", recalculateCheckboxSum);
     });
+
+    checkContainer.style.display = "block";
+    recalculateCheckboxSum();
+
+} else {
+    checkContainer.style.display = "none";
+}
+
+      
     function recalculateCheckboxSum() {
       const studentId = selectEl.value;
       const student = cachedStudents.find(s => s.id === studentId);
