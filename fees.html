@@ -336,7 +336,11 @@
           studentId,
           datePaid,
           amount,
-          monthsCovered: checkedMonths,
+          // monthsCovered: checkedMonths,
+           // New billing system
+          billingFrom: "",
+          billingTo: "",
+          nextDueDate: "",
           remarks
         };
         await firebaseService.addFeePayment(payment);
