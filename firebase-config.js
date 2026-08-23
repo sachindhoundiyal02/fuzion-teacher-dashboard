@@ -540,59 +540,151 @@ export const firebaseService = {
     }
   },
   // --- FEE SERVICES ---
+
   async addFeePayment(paymentData) {
-    await initPromise;
-    const teacher = await this.getCurrentTeacher();
-    if (!teacher) throw new Error("Unauthorized.");
-    const newPayment = {
-      ...paymentData,
-      id: window.isMockMode ? "fee-" + Math.random().toString(36).substr(2, 9) : null,
-      teacherId: teacher.uid
-    };
-    if (window.isMockMode) {
-      const fees = MOCK_DB.get("mock_fees");
-      fees.push(newPayment);
-      MOCK_DB.set("mock_fees", fees);
-      // Find the last paid month in the covered list
-      if (paymentData.monthsCovered && paymentData.monthsCovered.length > 0) {
-        const sortedMonths = [...paymentData.monthsCovered].sort();
-        const maxCoveredMonth = sortedMonths[sortedMonths.length - 1];
-        
-        // Retrieve student and update if maxCoveredMonth is more recent than lastFeePaidMonth
-        const students = MOCK_DB.get("mock_students");
-        const idx = students.findIndex(s => s.id === paymentData.studentId);
-        if (idx !== -1) {
-          const currentLastPaid = students[idx].lastFeePaidMonth || "1970-01";
-          if (maxCoveredMonth > currentLastPaid) {
-            students[idx].lastFeePaidMonth = maxCoveredMonth;
-            MOCK_DB.set("mock_students", students);
-          }
-        }
+  await initPromise;
+
+  const teacher = await this.getCurrentTeacher();
+
+  if (!teacher) {
+    throw new Error("Unauthorized.");
+  }
+
+  // Validate billing cycles
+  const billingCycles = Array.isArray(paymentData.billingCycles)
+    ? paymentData.billingCycles
+    : [];
+
+  if (billingCycles.length === 0) {
+    throw new Error("Please select at least one billing cycle.");
+  }
+
+  // Find the latest billing cycle
+  const sortedCycles = [...billingCycles].sort((a, b) => {
+    return new Date(a.to) - new Date(b.to);
+  });
+
+  const latestCycle = sortedCycles[sortedCycles.length - 1];
+
+  const nextDueDate = latestCycle.to;
+
+  const newPayment = {
+    ...paymentData,
+
+    // Store calculated next due date with receipt
+    nextDueDate,
+
+    teacherId: teacher.uid,
+
+    id: window.isMockMode
+      ? "fee-" + Math.random().toString(36).substr(2, 9)
+      : null
+  };
+
+  // ============================================================
+  // MOCK MODE
+  // ============================================================
+
+  if (window.isMockMode) {
+
+    const fees = MOCK_DB.get("mock_fees");
+
+    fees.push(newPayment);
+
+    MOCK_DB.set("mock_fees", fees);
+
+    // Update student's nextDueDate
+    const students = MOCK_DB.get("mock_students");
+
+    const idx = students.findIndex(
+      s => s.id === paymentData.studentId
+    );
+
+    if (idx !== -1) {
+
+      const currentNextDueDate =
+        students[idx].nextDueDate || "";
+
+      /*
+       * Only move the next due date forward.
+       *
+       * Example:
+       * Current: 23 Aug
+       * Payment: 23 Aug → 23 Sep
+       *
+       * New nextDueDate = 23 Sep
+       */
+
+      if (
+        !currentNextDueDate ||
+        nextDueDate > currentNextDueDate
+      ) {
+        students[idx].nextDueDate = nextDueDate;
+
+        MOCK_DB.set("mock_students", students);
       }
-      return newPayment;
-    } else {
-      delete newPayment.id;
-      const docRef = await firebaseFirestoreModule.addDoc(
-        firebaseFirestoreModule.collection(dbInstance, "fees"),
-        newPayment
-      );
-      newPayment.id = docRef.id;
-      if (paymentData.monthsCovered && paymentData.monthsCovered.length > 0) {
-        const sortedMonths = [...paymentData.monthsCovered].sort();
-        const maxCoveredMonth = sortedMonths[sortedMonths.length - 1];
-        
-        const docRefStud = firebaseFirestoreModule.doc(dbInstance, "students", paymentData.studentId);
-        const docSnap = await firebaseFirestoreModule.getDoc(docRefStud);
-        if (docSnap.exists()) {
-          const currentLastPaid = docSnap.data().lastFeePaidMonth || "1970-01";
-          if (maxCoveredMonth > currentLastPaid) {
-            await firebaseFirestoreModule.updateDoc(docRefStud, { lastFeePaidMonth: maxCoveredMonth });
-          }
-        }
-      }
-      return newPayment;
     }
-  },
+
+    return newPayment;
+  }
+
+  // ============================================================
+  // FIREBASE MODE
+  // ============================================================
+
+  delete newPayment.id;
+
+  const docRef = await firebaseFirestoreModule.addDoc(
+    firebaseFirestoreModule.collection(
+      dbInstance,
+      "fees"
+    ),
+    newPayment
+  );
+
+  newPayment.id = docRef.id;
+
+  // ------------------------------------------------------------
+  // Update Student's Next Due Date
+  // ------------------------------------------------------------
+
+  const studentRef = firebaseFirestoreModule.doc(
+    dbInstance,
+    "students",
+    paymentData.studentId
+  );
+
+  const studentSnap =
+    await firebaseFirestoreModule.getDoc(studentRef);
+
+  if (studentSnap.exists()) {
+
+    const studentData = studentSnap.data();
+
+    const currentNextDueDate =
+      studentData.nextDueDate || "";
+
+    /*
+     * Never move the student's due date backwards.
+     */
+
+    if (
+      !currentNextDueDate ||
+      nextDueDate > currentNextDueDate
+    ) {
+
+      await firebaseFirestoreModule.updateDoc(
+        studentRef,
+        {
+          nextDueDate: nextDueDate
+        }
+      );
+    }
+  }
+
+  return newPayment;
+},
+  
   async getFeeHistory(studentId = null) {
     await initPromise;
     const teacher = await this.getCurrentTeacher();
