@@ -339,25 +339,26 @@
         return;
       }
       // Collect checked months
-      const checkedMonths = [];
-      document.querySelectorAll(".month-cb:checked").forEach(cb => {
-        checkedMonths.push(cb.value);
+      const checkedCycles = [];
+
+      document.querySelectorAll(".billing-cycle-cb:checked").forEach(cb => {
+          checkedCycles.push({
+              from: cb.dataset.from,
+              to: cb.dataset.to,
+              amount: Number(cb.dataset.amount) || 0
+          });
       });
       const saveBtn = document.getElementById("saveFeeBtn");
       const spinner = saveBtn.querySelector(".spinner-border");
       saveBtn.disabled = true;
       spinner.classList.remove("d-none");
       try {
-        const payment = {
-          studentId,
-          datePaid,
-          amount,
-          // monthsCovered: checkedMonths,
-           // New billing system
-          billingFrom: "",
-          billingTo: "",
-          nextDueDate: "",
-          remarks
+      const payment = {
+            studentId,
+            datePaid,
+            amount,
+            billingCycles: checkedCycles,
+            remarks
         };
         await firebaseService.addFeePayment(payment);
         collectForm.reset();
