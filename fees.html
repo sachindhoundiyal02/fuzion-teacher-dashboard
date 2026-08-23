@@ -127,11 +127,11 @@
             </div>
             <!-- Dynamic checklist to clear month entries -->
             <div class="mt-4" id="monthChecklistContainer" style="display: none;">
-              <label class="form-label fw-semibold mb-2">Check Months to Clear / Mark as Paid</label>
+              <label class="form-label fw-semibold mb-2">Check Billing Cycles to Clear</label>
               <div class="p-3 bg-light rounded d-flex flex-wrap gap-3" id="monthChecklist">
                 <!-- Checkboxes populated here -->
               </div>
-              <span class="text-muted small mt-1 d-block"><i class="bi bi-info-circle"></i> Clearing a month advances the student's "Last Month Paid" state automatically.</span>
+              <span class="text-muted small mt-1 d-block"><i class="bi bi-info-circle"></i> Clearing a billing cycle advances the student's next due date automatically.</span>
             </div>
             <div class="mb-0 mt-4">
               <label for="feeRemarks" class="form-label fw-semibold">Remarks / Payment Notes</label>
@@ -275,7 +275,7 @@
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
           <div>
             <h6 class="fw-bold mb-1">${dues.text}</h6>
-            <span class="small opacity-75">Last Cleared Month: <strong>${student.lastFeePaidMonth || 'None'}</strong></span>
+            <span class="small opacity-75">Next Fee Due: <strong>${student.nextDueDate || 'Not Generated'}</strong></span>
           </div>
           <span class="fw-bold px-2 py-1 bg-white bg-opacity-25 rounded" style="font-size: 0.8rem;">Monthly Fee: ₹${student.monthlyFee}</span>
         </div>
