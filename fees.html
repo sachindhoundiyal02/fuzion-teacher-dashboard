@@ -315,13 +315,13 @@
 } else {
     checkContainer.style.display = "none";
 }
-
+});
       
     function recalculateCheckboxSum() {
       const studentId = selectEl.value;
       const student = cachedStudents.find(s => s.id === studentId);
       if (!student) return;
-      const count = document.querySelectorAll(".month-cb:checked").length;
+      const count = document.querySelectorAll(".billing-cycle-cb:checked").length;
       amountInput.value = count * student.monthlyFee;
     }
     // Submission Logic payment Record
