@@ -47,54 +47,166 @@ export async function checkAuthState(redirectOnUnauth = true) {
 // Automatically calculates pending months & due amount
 // e.g. "Rahul Kumar - Pending for 2 Months - ₹3000 Due"
 export function calculateDues(student) {
-  const joiningMonth = student.joiningDate.substring(0, 7); // "YYYY-MM"
-  let lastPaid = student.lastFeePaidMonth || "";
-  // If student has never paid, the month before joining is the baseline
-  if (!lastPaid) {
-    const [joinYr, joinMo] = joiningMonth.split("-").map(Number);
-    let prevYr = joinYr;
-    let prevMo = joinMo - 1;
-    if (prevMo === 0) {
-      prevMo = 12;
-      prevYr -= 1;
+    const monthlyFee = Number(student.monthlyFee) || 0;
+
+    // Student has no joining date
+    if (!student.joiningDate) {
+        return {
+            pendingMonths: 0,
+            dueAmount: 0,
+            status: "Paid",
+            dueMonthsList: [],
+            billingCycles: [],
+            text: `${student.name} - All Dues Paid`
+        };
     }
-    lastPaid = `${prevYr}-${String(prevMo).padStart(2, '0')}`;
-  }
-  const [lastYr, lastMo] = lastPaid.split("-").map(Number);
-  
-  // Calculate difference in months
-  const yearDiff = CURRENT_YEAR - lastYr;
-  const monthDiff = CURRENT_MONTH - lastMo;
-  const pendingMonthsCount = (yearDiff * 12) + monthDiff;
-  const monthlyFee = Number(student.monthlyFee) || 0;
-  const pendingAmount = Math.max(0, pendingMonthsCount * monthlyFee);
-  let status = "Paid";
-  if (pendingMonthsCount === 1) {
-    status = "Pending";
-  } else if (pendingMonthsCount >= 2) {
-    status = "Overdue";
-  }
-  // Generate pending months text representation
-  const dueMonthsList = [];
-  let tempYr = lastYr;
-  let tempMo = lastMo;
-  for (let i = 0; i < pendingMonthsCount; i++) {
-    tempMo++;
-    if (tempMo > 12) {
-      tempMo = 1;
-      tempYr++;
+
+    // Helper: parse YYYY-MM-DD safely in local time
+    function parseLocalDate(dateString) {
+        const [year, month, day] = dateString.split("-").map(Number);
+        return new Date(year, month - 1, day);
     }
-    dueMonthsList.push(`${tempYr}-${String(tempMo).padStart(2, '0')}`);
-  }
-  return {
-    pendingMonths: Math.max(0, pendingMonthsCount),
-    dueAmount: pendingAmount,
-    status: status,
-    dueMonthsList: dueMonthsList, // e.g. ["2026-04", "2026-05"]
-    text: pendingMonthsCount > 0 
-      ? `${student.name} - Pending for ${pendingMonthsCount} Month${pendingMonthsCount > 1 ? 's' : ''} - ₹${pendingAmount} Due` 
-      : `${student.name} - All Dues Paid`
-  };
+
+    // Helper: format date as YYYY-MM-DD
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    }
+
+    // Helper: add one month while keeping the billing day valid
+    function addOneMonth(date) {
+        const originalDay = date.getDate();
+
+        const nextDate = new Date(
+            date.getFullYear(),
+            date.getMonth() + 1,
+            1
+        );
+
+        const lastDayOfTargetMonth = new Date(
+            nextDate.getFullYear(),
+            nextDate.getMonth() + 1,
+            0
+        ).getDate();
+
+        nextDate.setDate(
+            Math.min(originalDay, lastDayOfTargetMonth)
+        );
+
+        return nextDate;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    /*
+     * nextDueDate means:
+     *
+     * Joining: 15 July
+     * First cycle: 15 July → 15 August
+     * nextDueDate: 15 August
+     */
+
+    let nextDueDate;
+
+    if (student.nextDueDate) {
+        nextDueDate = parseLocalDate(student.nextDueDate);
+    } else {
+        // Fallback for old students who don't have nextDueDate yet
+        const joiningDate = parseLocalDate(student.joiningDate);
+        nextDueDate = addOneMonth(joiningDate);
+    }
+
+    nextDueDate.setHours(0, 0, 0, 0);
+
+    const billingCycles = [];
+
+    /*
+     * If today is before nextDueDate:
+     *
+     * 15 July → 15 August
+     * Today = 10 August
+     *
+     * Nothing is pending.
+     */
+
+    if (today < nextDueDate) {
+        return {
+            pendingMonths: 0,
+            dueAmount: 0,
+            status: "Paid",
+            dueMonthsList: [],
+            billingCycles: [],
+            nextDueDate: formatDate(nextDueDate),
+            text: `${student.name} - All Dues Paid`
+        };
+    }
+
+    /*
+     * If today reaches nextDueDate, the current billing cycle
+     * becomes due.
+     *
+     * Example:
+     *
+     * 15 July → 15 August
+     */
+
+    let cycleDueDate = new Date(nextDueDate);
+
+    while (today >= cycleDueDate) {
+
+        const cycleFrom = addOneMonth(
+            cycleDueDate
+        );
+
+        cycleFrom.setMonth(cycleFrom.getMonth() - 1);
+
+        const cycleTo = new Date(cycleDueDate);
+
+        billingCycles.push({
+            from: formatDate(cycleFrom),
+            to: formatDate(cycleTo),
+            label:
+                `${formatDate(cycleFrom)} → ${formatDate(cycleTo)}`
+        });
+
+        cycleDueDate = addOneMonth(cycleDueDate);
+    }
+
+    const pendingMonthsCount = billingCycles.length;
+    const pendingAmount = pendingMonthsCount * monthlyFee;
+
+    let status = "Paid";
+
+    if (pendingMonthsCount === 1) {
+        status = "Pending";
+    } else if (pendingMonthsCount >= 2) {
+        status = "Overdue";
+    }
+
+    return {
+        pendingMonths: pendingMonthsCount,
+        dueAmount: pendingAmount,
+        status: status,
+
+        // Temporary compatibility with existing fees.html
+        dueMonthsList: billingCycles.map(
+            cycle => cycle.to.substring(0, 7)
+        ),
+
+        // New billing-cycle data
+        billingCycles: billingCycles,
+
+        nextDueDate: formatDate(nextDueDate),
+
+        text:
+            pendingMonthsCount > 0
+                ? `${student.name} - Pending for ${pendingMonthsCount} Month${pendingMonthsCount > 1 ? "s" : ""} - ₹${pendingAmount} Due`
+                : `${student.name} - All Dues Paid`
+    };
 }
 // Generate pre-written Whatsapp message URL
 export function getWhatsAppReminderLink(student, dueInfo, teacher) {
