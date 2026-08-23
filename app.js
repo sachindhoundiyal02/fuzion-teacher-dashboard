@@ -158,13 +158,8 @@ export function calculateDues(student) {
 
     while (today >= cycleDueDate) {
 
-        const cycleFrom = addOneMonth(
-            cycleDueDate
-        );
-
-        cycleFrom.setMonth(cycleFrom.getMonth() - 1);
-
-        const cycleTo = new Date(cycleDueDate);
+      const cycleFrom = new Date(cycleDueDate);
+      const cycleTo = addOneMonth(cycleDueDate);
 
         billingCycles.push({
             from: formatDate(cycleFrom),
