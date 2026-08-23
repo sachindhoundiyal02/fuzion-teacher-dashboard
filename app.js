@@ -132,18 +132,18 @@ export function calculateDues(student) {
      *
      * Nothing is pending.
      */
-
-    if (today < nextDueDate) {
-        return {
-            pendingMonths: 0,
-            dueAmount: 0,
-            status: "Paid",
-            dueMonthsList: [],
-            billingCycles: [],
-            nextDueDate: formatDate(nextDueDate),
-            text: `${student.name} - All Dues Paid`
-        };
-    }
+      
+        if (today < nextDueDate) {
+          return {
+              pendingMonths: 0,
+              dueAmount: 0,
+              status: "Not Due",
+              dueMonthsList: [],
+              billingCycles: [],
+              nextDueDate: formatDate(nextDueDate),
+              text: `${student.name} - Next Fee Due on ${formatDate(nextDueDate)}`
+          };
+      }
 
     /*
      * If today reaches nextDueDate, the current billing cycle
