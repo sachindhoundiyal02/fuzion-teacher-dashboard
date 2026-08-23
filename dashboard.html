@@ -62,7 +62,7 @@
                 <div class="stat-icon bg-success-light text-success">
                   <i class="bi bi-currency-rupee"></i>
                 </div>
-                <h6 class="text-secondary small fw-bold text-uppercase mb-2">Fees Collected (Jun)</h6>
+                <h6 class="text-secondary small fw-bold text-uppercase mb-2">  Fees Collected (<span id="feesCollectedMonth">---</span>)</h6>
                 <h3 class="fw-bold m-0" id="statFeesCollected">₹0</h3>
               </div>
               <div class="border-top border-light pt-2 mt-3 small text-muted">
@@ -218,9 +218,29 @@
         const totalStudents = students.length;
         document.getElementById("statTotalStudents").textContent = totalStudents;
         // Current Month (2026-06) Fees Collected
-        const thisMonthPayments = payments.filter(p => p.datePaid && p.datePaid.startsWith("2026-06"));
-        const feesCollected = thisMonthPayments.reduce((acc, curr) => acc + Number(curr.amount), 0);
-        document.getElementById("statFeesCollected").textContent = `₹${feesCollected}`;
+      // Current Month Fees Collected
+          const today = new Date();
+          const currentYear = today.getFullYear();
+          const currentMonth = String(today.getMonth() + 1).padStart(2, "0");
+          
+          const monthName = today.toLocaleString("en-US", {
+            month: "short"
+          });
+          
+          document.getElementById("feesCollectedMonth").textContent = monthName;
+          
+          const currentMonthPayments = payments.filter(p =>
+            p.datePaid &&
+            p.datePaid.startsWith(`${currentYear}-${currentMonth}`)
+          );
+          
+          const feesCollected = currentMonthPayments.reduce(
+            (acc, curr) => acc + (Number(curr.amount) || 0),
+            0
+          );
+          
+          document.getElementById("statFeesCollected").textContent =
+            `₹${feesCollected}`;
         // Calculate Dues and Overdue
         let pendingFeesSum = 0;
         let overdueStudentsCount = 0;
