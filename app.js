@@ -110,66 +110,46 @@ export function calculateDues(student) {
      * nextDueDate: 15 August
      */
 
-    let nextDueDate;
+   let nextDueDate;
 
-    if (student.nextDueDate) {
-        nextDueDate = parseLocalDate(student.nextDueDate);
-    } else {
-        // Fallback for old students who don't have nextDueDate yet
-        const joiningDate = parseLocalDate(student.joiningDate);
-        nextDueDate = addOneMonth(joiningDate);
-    }
+// Billing should start from the student's joining date.
+// If some months are already paid, start from the month after
+// the latest paid month.
+if (student.lastFeePaidMonth) {
+    const [paidYear, paidMonth] = student.lastFeePaidMonth
+        .split("-")
+        .map(Number);
 
-    nextDueDate.setHours(0, 0, 0, 0);
+    // Keep the original joining day
+    const joiningDay = parseLocalDate(student.joiningDate).getDate();
 
-    const billingCycles = [];
+    nextDueDate = new Date(paidYear, paidMonth - 1, joiningDay);
+    nextDueDate = addOneMonth(nextDueDate);
+} else {
+    // No fee paid yet → first billing cycle starts from joining date
+    nextDueDate = parseLocalDate(student.joiningDate);
+}
 
-    /*
-     * If today is before nextDueDate:
-     *
-     * 15 July → 15 August
-     * Today = 10 August
-     *
-     * Nothing is pending.
-     */
-      
-        if (today < nextDueDate) {
-          return {
-              pendingMonths: 0,
-              dueAmount: 0,
-              status: "Not Due",
-              dueMonthsList: [],
-              billingCycles: [],
-              nextDueDate: formatDate(nextDueDate),
-              text: `${student.name} - Next Fee Due on ${formatDate(nextDueDate)}`
-          };
-      }
+nextDueDate.setHours(0, 0, 0, 0);
 
-    /*
-     * If today reaches nextDueDate, the current billing cycle
-     * becomes due.
-     *
-     * Example:
-     *
-     * 15 July → 15 August
-     */
+const billingCycles = [];
 
-    let cycleDueDate = new Date(nextDueDate);
+// Generate every unpaid billing cycle starting from the joining date.
+// The current month is also pending immediately after joining.
+let cycleFrom = new Date(nextDueDate);
 
-    while (today >= cycleDueDate) {
+while (today >= cycleFrom) {
 
-      const cycleFrom = new Date(cycleDueDate);
-      const cycleTo = addOneMonth(cycleDueDate);
+    const cycleTo = addOneMonth(cycleFrom);
 
-        billingCycles.push({
-            from: formatDate(cycleFrom),
-            to: formatDate(cycleTo),
-            label:
-                `${formatDate(cycleFrom)} → ${formatDate(cycleTo)}`
-        });
+    billingCycles.push({
+        from: formatDate(cycleFrom),
+        to: formatDate(cycleTo),
+        label: `${formatDate(cycleFrom)} → ${formatDate(cycleTo)}`
+    });
 
-        cycleDueDate = addOneMonth(cycleDueDate);
-    }
+    cycleFrom = cycleTo;
+}
 
     const pendingMonthsCount = billingCycles.length;
     const pendingAmount = pendingMonthsCount * monthlyFee;
