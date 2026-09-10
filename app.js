@@ -115,25 +115,20 @@ export function calculateDues(student) {
 // After payment, addFeePayment() moves nextDueDate to the next cycle.
 let nextDueDate;
 
-if (student.lastFeePaidMonth) {
+if (student.nextDueDate) {
+    nextDueDate = parseLocalDate(student.nextDueDate);
+} else if (student.lastFeePaidMonth) {
     const [paidYear, paidMonth] = student.lastFeePaidMonth
         .split("-")
         .map(Number);
 
     const joiningDay = parseLocalDate(student.joiningDate).getDate();
 
-    nextDueDate = new Date(
-        paidYear,
-        paidMonth - 1,
-        joiningDay
-    );
-
+    nextDueDate = new Date(paidYear, paidMonth - 1, joiningDay);
     nextDueDate = addOneMonth(nextDueDate);
-
 } else {
     nextDueDate = parseLocalDate(student.joiningDate);
 }
-
 nextDueDate.setHours(0, 0, 0, 0);
 
 const billingCycles = [];
