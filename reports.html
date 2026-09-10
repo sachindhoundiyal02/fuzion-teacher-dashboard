@@ -231,7 +231,9 @@
       const sorted = [...paymentsCached].sort((a, b) => b.datePaid.localeCompare(a.datePaid));
       tbody.innerHTML = sorted.map(f => {
         const student = studentsCached.find(s => s.id === f.studentId) || { name: "Unknown Student" };
-        const months = (f.monthsCovered || []).join(", ") || "N/A";
+       const months = f.billingCycles && f.billingCycles.length > 0
+            ? f.billingCycles.map(cycle => `${cycle.from} → ${cycle.to}`).join(", ")
+            : (f.monthsCovered || []).join(", ") || 'N/A';
         return `
           <tr>
             <td class="small text-muted">${f.id}</td>
