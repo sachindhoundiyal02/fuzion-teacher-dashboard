@@ -677,6 +677,8 @@ await firebaseFirestoreModule.updateDoc(
   }
 ); 
  }
+}
+
   return newPayment;
 },
   
