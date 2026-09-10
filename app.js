@@ -110,23 +110,14 @@ export function calculateDues(student) {
      * nextDueDate: 15 August
      */
 
-   let nextDueDate;
+ // nextDueDate represents the START of the next unpaid billing cycle.
+// For a new student, billing starts from the joining date.
+// After payment, addFeePayment() moves nextDueDate to the next cycle.
+let nextDueDate;
 
-// Billing should start from the student's joining date.
-// If some months are already paid, start from the month after
-// the latest paid month.
-if (student.lastFeePaidMonth) {
-    const [paidYear, paidMonth] = student.lastFeePaidMonth
-        .split("-")
-        .map(Number);
-
-    // Keep the original joining day
-    const joiningDay = parseLocalDate(student.joiningDate).getDate();
-
-    nextDueDate = new Date(paidYear, paidMonth - 1, joiningDay);
-    nextDueDate = addOneMonth(nextDueDate);
+if (student.nextDueDate) {
+    nextDueDate = parseLocalDate(student.nextDueDate);
 } else {
-    // No fee paid yet → first billing cycle starts from joining date
     nextDueDate = parseLocalDate(student.joiningDate);
 }
 
@@ -134,8 +125,6 @@ nextDueDate.setHours(0, 0, 0, 0);
 
 const billingCycles = [];
 
-// Generate every unpaid billing cycle starting from the joining date.
-// The current month is also pending immediately after joining.
 let cycleFrom = new Date(nextDueDate);
 
 while (today >= cycleFrom) {
