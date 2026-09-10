@@ -668,15 +668,31 @@ export const firebaseService = {
      * Never move the student's due date backwards.
      */
 
-    if (!currentNextDueDate ||  nextDueDate > currentNextDueDate) {
-await firebaseFirestoreModule.updateDoc(
-  studentRef,
-  {
-    nextDueDate: nextDueDate,
+//     if (!currentNextDueDate ||  nextDueDate > currentNextDueDate) {
+// await firebaseFirestoreModule.updateDoc(
+//   studentRef,
+//   {
+//     nextDueDate: nextDueDate,
+//     lastFeePaidMonth: latestCycle.from.substring(0, 7)
+//   }
+// ); 
+//  }
+
+    const updateData = {
     lastFeePaidMonth: latestCycle.from.substring(0, 7)
-  }
-); 
- }
+};
+
+if (!currentNextDueDate || nextDueDate > currentNextDueDate) {
+    updateData.nextDueDate = nextDueDate;
+}
+
+await firebaseFirestoreModule.updateDoc(
+    studentRef,
+    updateData
+);
+
+
+    
 }
 
   return newPayment;
